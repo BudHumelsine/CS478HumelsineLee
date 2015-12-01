@@ -1,0 +1,190 @@
+#John Humelsine
+#James Lee
+
+Part A: Lexical Syntax
+-Whitespace: whitespace (indents and line breaks) will not be mandatory in any circumstance except to separate different tokens.
+In this case, any form of whitespace is acceptable (space, tab, new line).
+Statements will be delimited by curly braces.
+
+-Case Sensitivity: the language is case sensitive.
+
+-Notation: notation will be infix. That is, operators will be placed between their operands (1+2).
+
+-Legal identifiers: any combination of the characters a-z, A-Z, 0-9, and _ BUT must start with either a-z or A-Z.
+
+-Literals: *** more examples
+123 - int literal for the integer 123.
+-12 - int literal for the NEGATIVE integer -12.
+1.2 - float literal for the float 1.2 *** (are these valid? 0.2, .2)
+"hello" - String literal
+'a' - char literal. Note that a char is a single character and thus '' cannot contain more than one symbol.
+true - boolean literal for true.
+false - boolean literal for false.
+[1, 2, 3] - Array literal
+
+-Symbols:
+#  - comment. Everything until the next \n character is ignored.
+#* - indicates the start of a block comment. Ends with *#.
+== - test for equality. Evaluates to either true or false.
+>  - boolean greater than. Evaluates to either true or false.
+>= - boolean greater than or equal to. Evaluates to either true or false.
+<  - boolean less than. Evaluates to either true or false.
+<= - boolean less than or equal to. Evaluates to either true or false.
+!= - boolean not equal to. Evaluates to either true or false.
+     It should be noted that this is just a shortcut for the boolean expression: not a==b.
+++ - increment by 1 and reassign. *** these aren't actually in the CFG yet
+-- - decrement by 1 and reassign.
+     NOTE: the ++ and -- operators, if used, must ONLY be used on a line by themselves.
+	 That is, x++; is a valid statement, but x=y++; is invalid.
+	 Also note that this is equivalent to +=1 and -=1, respectively.
+	 Finally, only postfix notation is supported (x++ is valid, but not ++x).
+	 This is the only valid use for the ++ and -- operators.
++= - increment by the specified value and reassign.
+-= - decrement by the specified value and reassign.
+     These operators, like the ++ and -- operators, can only be used on a line by themselves.
+// - floor function
+=  - (re)assignment operator. Only one assignment may occur per statement in order to avoid confusion.
+     For example, one could not write: int a = 1 + sum(int[] myArray = [1, 2, 3, 4, 5]);
+	 Also note that when a variable is initially assigned, it must include a type declaration explicitly.
+	 Assignment: int a = 5;
+	 Reassignment: a = 5; #Where a is some integer that has already been defined elsewhere
+** - power function (x**2 is the same as x*x)
+"" - denotes string literal. Escape characters may be used from inside the quotations.
+'' - denotes char literal
+%  - modulus operator
+[] - Array literal OR collection accessor depending on where placed.
+     These will be evaluated as a collection accessor if they are placed next to the reference to some collection object.
+	 The return type of this collection accessor varies depending on the type of collection the user selects.
+	 Arrays will return the element at that index (myArr[0] evaluates to 5).
+	 Sets will return true if the element in [] is in the set (animals["dog"] evaluates to true).
+	 Maps will return the corresponding value to the key given in [] (phonebook["jenny"] evaluates to "867-5309").
+	 Otherwise, the [] are treated as an Array literal, much like 5 is a literal for the integer 5.
+	 For example: int[] myArr = [1, 2, 3];
+[:]- Array and String slicing operator (as used in Python). The slice operator is half-inclusive (left inclusive, right exclusive).
+     That is, "hello"[0:1] returns "h" because it includes index 0, but not index 1.
+	 The ints on either side of the colon are optional and their exclusion means different things.
+	 [a:b] - return a new Array of the elements from a (inclusive) to b (exclusive).
+	 [a:]  - return a new Array of the elements from a (inclusive) to the end of the Array.
+	 [:b]  - return a new Array of the elements from the start of the Array to b (exclusive).
+	 [:]   - return a new Array of the elements from the start of the Array to the end of the Array.
+	         This is also known as a shallow copy.
+() - grouping operator for mathematical expressions and expresses function inputs
++  - addition operator
+-  - subtraction operator OR negative number literal if it precedes an int literal
+*  - multiplication operator
+/  - division operator
+,  - element separator
+{} - used to wrap multiple statements as a single statement, as used in functions and loops
+.  - dot notation for method calls
+\  - escape character. This symbol only has meaning within the context of a string.
++: - prepend operator for arrays
+:+ - append operator for arrays
+
+-Keywords:
+and - boolean and
+or - boolean or
+not - boolean not
+for - for loop
+if - if statement
+else - else clause of an overarching if statement
+while - while statement
+return - used to define the output or evaluation of a function.
+         The type of the value returned must match the return type of the function.		
+break - used to exit a loop. Syntax like the continue statement.
+class - used to declare a class. More detailed syntax will follow later.
+Void - the return type for null.
+       If a function's return type is void, then a return statement is not required.
+	   One MAY be used if it returns a null-type (i.e. return;)
+Null - a reference to nothing.
+       Often used as a placeholder when it does not make sense to define a variable.
+	   Can also be used in a null statement (a statement which does nothing).
+	   A null statement could be: Null{}
+True - boolean true
+       It should be noted that, as in Python, many values can be used to represent a boolean true.
+	   An empty array evaluates to false, as does the int 0 and the keyword false.
+	   Every other non-null object evaluates to true.
+	   Furthermore, the boolean value true, when type casted, maps to the integer value 1.
+False - boolean false.
+try - used together with the except statement to handle errors.
+except - used together with the try statement to handle errors.
+print("string") - prints the given string 
+
+			 
+Regular Expressions for Variable Tokens:
+-Valid Identifiers: [a-zA-z][a-zA-Z0-9_]*
+-Int Literals: -?[1-9][0-9]* *** doesn't include 0
+-Float Literals: -?[0-9]*"."[0-9]+ 
+-String Literals: \".*\" #Here, I escape the quotes because I want LITERALLY the quotes surrounding any number of any character. Something like a double quote is not allowed. Many languages have different end of line character counts so line break handling is hairy.
+-Char Literals: \'.\' #Once again, I escape the '' *** same issue as with String Literals
+
+
+Part B: CFG
+#Here are some common definitions that will be used later on.
+<ident> = [a-zA-Z][a-zA-Z0-9_]*
+<int> = -?[1-9][0-9]*
+<flt> = -?[0-9]*"."[0-9]+
+<num> = <int> | <flt>
+<str> = \".*\"
+<chr> = \'.\'
+<bool> = "True" | "False" 
+<type> = "Int" | "String" | "Void" | "Char" | "Double" | "Boolean"
+<args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
+<funct> = <ident> "(" <args> ")"
+        | <ident> "." <funct>
+<any> = <stmt> | <dec> | <expr>
+
+1.Expressions
+<expr> = 
+	   #Numerical operations:
+	   <num>
+       | '(' <expr> ')'					#Parens
+	   | <expr> '**' <expr>				#Exponentiation
+	   | <expr> '*' <expr>				#Multiplication
+	   | <expr> '/' <expr>				#Division
+	   | <expr> '//' <expr>				#Floor; subset of division
+	   | <expr> '%' <expr>				#Modulus; subset of division
+	   | <expr> '+' <expr>				#Addition
+	   | <expr> '-' <expr>				#Subtraction
+	   #Boolean operations:
+	   | <bool>
+	   | "not " <expr>					#Boolean not; like multiplication but highest priority *** get rid of not and comment about spaces
+	   | <expr> " and " <expr>			#Boolean and; like multiplication
+	   | <expr> " or " <expr>			#Boolean or; like addition
+	   | <expr> "==" <expr>				#Equality operator
+	   | <expr> "!=" <expr>				#Inverse equality operator
+	   | <expr> "<=" <expr>				#Less than or equal to operator
+	   | <expr> ">=" <expr>				#Greater than or equal to operator
+	   | <expr> "<" <expr>				#Less than operator
+	   | <expr> ">" <expr>				#Greater than operator
+	   #String operations:
+	   | <str>
+	   #Char operations:
+	   | <chr>
+	   #An identifier:
+	   #This identifier could reference an expression.
+	   #The identifier could also contain a field or function (method) that references an expression.
+	   | <ident>
+	   
+2.Declarations
+<dec> = 
+   #A function:
+   | <funct>
+   #Functions and fields that belong to expressions:
+   #Because an expression evaluates to an object, it follows that this object may have its own functions and fields.
+   #These could also be expressions.
+   | <expr> "." <ident>
+   | <expr> "." <funct>
+   
+   #Variable declarations:
+   | <type> ":" <ident> "=" <expr>
+   
+3.Statements
+  
+<stmt> = 
+   | "for" "(" <ident> "<-" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
+   | "while" "(" <expr> ")" "{" <any> "}"
+   | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
+   | "print" "(" <expr> ")" "{}"
+  
+Part C: Unambiguous CFG
+
