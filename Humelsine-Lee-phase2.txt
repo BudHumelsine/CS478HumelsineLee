@@ -137,45 +137,33 @@ Part B: CFG
 <expr> = 
 	   #Numerical operations:
 	   <num>
-       | '(' <expr> ')'					#Parens
-	   | <expr> '**' <expr>				#Exponentiation
-	   | <expr> '*' <expr>				#Multiplication
-	   | <expr> '/' <expr>				#Division
-	   | <expr> '//' <expr>				#Floor; subset of division
-	   | <expr> '%' <expr>				#Modulus; subset of division
-	   | <expr> '+' <expr>				#Addition
-	   | <expr> '-' <expr>				#Subtraction
-	   #Boolean operations:
+       | '(' <expr> ')'					
+	   | <expr> '**' <expr>				
+	   | <expr> '*' <expr>				
+	   | <expr> '/' <expr>				
+	   | <expr> '//' <expr>				
+	   | <expr> '%' <expr>				
+	   | <expr> '+' <expr>				
+	   | <expr> '-' <expr>				
 	   | <bool>
-	   | "not " <expr>					#Boolean not; like multiplication but highest priority *** get rid of not and comment about spaces
-	   | <expr> " and " <expr>			#Boolean and; like multiplication
-	   | <expr> " or " <expr>			#Boolean or; like addition
-	   | <expr> "==" <expr>				#Equality operator
-	   | <expr> "!=" <expr>				#Inverse equality operator
-	   | <expr> "<=" <expr>				#Less than or equal to operator
-	   | <expr> ">=" <expr>				#Greater than or equal to operator
-	   | <expr> "<" <expr>				#Less than operator
-	   | <expr> ">" <expr>				#Greater than operator
-	   #String operations:
+	   | "not " <expr>					
+	   | <expr> " and " <expr>			
+	   | <expr> " or " <expr>			
+	   | <expr> "==" <expr>				
+	   | <expr> "!=" <expr>				
+	   | <expr> "<=" <expr>				
+	   | <expr> ">=" <expr>				
+	   | <expr> "<" <expr>				
+	   | <expr> ">" <expr>				
 	   | <str>
-	   #Char operations:
 	   | <chr>
-	   #An identifier:
-	   #This identifier could reference an expression.
-	   #The identifier could also contain a field or function (method) that references an expression.
 	   | <ident>
 	   
 2.Declarations
 <dec> = 
-   #A function:
    | <funct>
-   #Functions and fields that belong to expressions:
-   #Because an expression evaluates to an object, it follows that this object may have its own functions and fields.
-   #These could also be expressions.
    | <expr> "." <ident>
    | <expr> "." <funct>
-   
-   #Variable declarations:
    | <type> ":" <ident> "=" <expr>
    
 3.Statements
@@ -187,4 +175,47 @@ Part B: CFG
    | "print" "(" <expr> ")" "{}"
   
 Part C: Unambiguous CFG
+<expr> = <expr3>
+
+
+<expr1> = <num>
+	| <bool>
+	| <str>
+	| <chr>
+	| <ident>
+	| '(' <expr> ')'
+	|<expr>
+
+<expr2> = <expr1>
+	<expr2> '**' <expr1>			   
+	| <expr2> '*' <expr1>	
+	| <expr2> '/' <expr1>				
+	| <expr2> '//' <expr1>		
+	| <expr2> '%' <expr1>	
+	| "not " <expr2>					
+	| <expr2> " and " <expr1>			
+	| <expr2> " or " <expr1>	
+
+<expr3> = <expr2>	
+	| <expr3> '+' <expr2>				
+	| <expr3> '-' <expr2>				   		
+	| <expr3> "==" <expr2>				
+	| <expr3> "!=" <expr2>				
+	| <expr3> "<=" <expr2>				
+	| <expr3> ">=" <expr2>				
+	| <expr3> "<" <expr2>				
+	| <expr3> ">" <expr2>	
+
+<dec> = 
+   | <funct>
+   | <expr> "." <ident>
+   | <expr> "." <funct>
+   | <type> ":" <ident> "=" <expr>
+  
+<stmt> = 
+   | "for" "(" <ident> "<-" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
+   | "while" "(" <expr> ")" "{" <any> "}"
+   | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
+   | "print" "(" <expr> ")" "{}"			
+	   
 
