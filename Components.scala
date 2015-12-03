@@ -9,8 +9,8 @@ case object LCurly extends Token // {
 case object RCurly extends Token // }
 case object LAngle extends Token //<
 case object RAngle extends Token //>
-case object LBracket extends Token // [
-case object RBracket extends Token // ]
+case object LBrack extends Token // [
+case object RBrack extends Token // ]
 case object Comma extends Token
 case object Dot extends Token
 case object Slash extends Token
@@ -35,6 +35,7 @@ case object ForTok extends Token
 case object IfTok extends Token
 case object ElseIfTok extends Token
 case object ElseTok extends Token
+case object ReturnTok extends Token
 case object WhileTok extends Token
 case object PrintTok extends Token
 case object ToTok extends Token

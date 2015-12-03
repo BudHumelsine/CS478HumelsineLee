@@ -1,6 +1,5 @@
 package lang
 
-
 class Scanner {
   def scanner(text: String): List[Token] = {
     def scan(index: Int): List[Token] = {
@@ -28,7 +27,6 @@ class Scanner {
       else if(c == '!') Exclamation +: scan(i+1)
       else if(c == '=') Equals +: scan(i+1)
       else if(c == ':') Colon +: scan(i+1)
-      else if(c == ';') SemiColon +: scan(i+1)
       else if(c.isDigit) scanDigits(i)
       else if(c == '\"') scanStr(i)
       else if(c == '\'') scanChr(i)
@@ -118,7 +116,7 @@ class Scanner {
       else if(word == "to") ToTok +: scan(i)
       else if(word == "until") UntilTok +: scan(i)
       else if(word == "in") InTok +: scan(i)
-      else Symbol(word) +: scan(i)
+      else Name(word) +: scan(i)
     }
     
     scan(0)
