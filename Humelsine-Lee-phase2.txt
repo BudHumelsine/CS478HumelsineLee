@@ -169,7 +169,7 @@ Part B: CFG
 3.Statements
   
 <stmt> = 
-   | "for" "(" <ident> "<-" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
+   | "for" "(" <ident> "in" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
    | "while" "(" <expr> ")" "{" <any> "}"
    | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
    | "print" "(" <expr> ")" "{}"
@@ -183,6 +183,7 @@ Part C: Unambiguous CFG
 	| <str>
 	| <chr>
 	| <ident>
+	| <flt>
 	| '(' <expr> ')'
 	|<expr>
 
@@ -213,7 +214,7 @@ Part C: Unambiguous CFG
    | <type> ":" <ident> "=" <expr>
   
 <stmt> = 
-   | "for" "(" <ident> "<-" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
+   | "for" "(" <ident> "in" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
    | "while" "(" <expr> ")" "{" <any> "}"
    | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
    | "print" "(" <expr> ")" "{}"			
