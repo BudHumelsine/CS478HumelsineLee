@@ -24,7 +24,8 @@ object Main {
   }
   
   def getTextFromFile(filename: String): String = {
-    Source.fromFile(filename).getLines.mkString 
+    Source.fromFile(filename).mkString 
+    //Source.fromFile(filename).getLines.mkString 
   }
   
   def scan(text: String): List[Token] = {

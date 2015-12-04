@@ -44,7 +44,7 @@ class Scanner {
       else {
         var i = index
         while(i < text.length){
-          if(i < text.length-2 && text(i) == '\\' && (text(i+1) == 'n' || text(i+1)== 'r')) return scan(i+2)
+          if(i < text.length-1 && text(i) == '\n') return scan (i+1) //&& (text(i+1) == 'n' || text(i+1)== 'r')) scan(i+2)
           i += 1
         } 
         scan(i)
