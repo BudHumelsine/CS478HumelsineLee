@@ -44,7 +44,7 @@ class Scanner {
       else {
         var i = index
         while(i < text.length){
-          if(text(i) == '\n') return scan(i+1)
+          if(i < text.length-2 && text(i) == '\\' && (text(i+1) == 'n' || text(i+1)== 'r')) return scan(i+2)
           i += 1
         } 
         scan(i)
@@ -76,7 +76,7 @@ class Scanner {
       var i = index + 1
       while(i < text.length && (text(i) != '\"')) i += 1
       if(i > text.length) throw new StringScanException("Expected closing \".")
-      else if (text(i) == "\"") {
+      else if (text(i) == '\"') {
         val s = text.substring(index + 1, i)
         if (s.contains("\n")) throw new Exception("Literal newline character forbidden inside string.")
         Str(s) +: scan(i+1)
@@ -99,8 +99,8 @@ class Scanner {
         word += text(i)
         i += 1
       }
-      if(word == "true") Bool(true) +: scan(i)
-      else if(word == "false") Bool(false) +: scan(i)
+      if(word == "True") Bool(true) +: scan(i)
+      else if(word == "False") Bool(false) +: scan(i)
       else if(word == "and") AndTok +: scan(i)
       else if(word == "or") OrTok +: scan(i)
       else if(word == "not") NotTok +: scan(i)
@@ -116,6 +116,13 @@ class Scanner {
       else if(word == "to") ToTok +: scan(i)
       else if(word == "until") UntilTok +: scan(i)
       else if(word == "in") InTok +: scan(i)
+      else if(word == "Int") IntTok +: scan(i)
+      else if(word == "Void") VoidTok +: scan(i)
+      else if(word == "Char") CharTok +: scan(i)
+      else if(word == "Double") DoubleTok +: scan(i)
+      else if(word == "Boolean") IntTok +: scan(i)
+      else if(word == "BEGIN") BeginTok +: scan(i)
+      else if(word == "END") EndTok +: scan(i)
       else Name(word) +: scan(i)
     }
     

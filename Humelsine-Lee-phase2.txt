@@ -129,7 +129,7 @@ Part B: CFG
 <bool> = "True" | "False" 
 <type> = "Int" | "String" | "Void" | "Char" | "Double" | "Boolean"
 <args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
-<funct> = <ident> "(" <args> ")"
+<funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
 <any> = <stmt> | <dec> | <expr>
 
@@ -219,4 +219,17 @@ Part C: Unambiguous CFG
    | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
    | "print" "(" <expr> ")" "{}"			
 	   
+<any> = (<stmt> | <dec> | <expr>)*
 
+<ident> = [a-zA-Z][a-zA-Z0-9_]*
+<int> = -?[1-9][0-9]*
+<flt> = -?[0-9]*"."[0-9]+
+<num> = <int> | <flt>
+<str> = \".*\"
+<chr> = \'.\'
+<bool> = "True" | "False" 
+<type> = "Int" | "String" | "Void" | "Char" | "Double" | "Boolean"
+<args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
+<funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
+        | <ident> "." <funct>
+<any> = <stmt> | <dec> | <expr>

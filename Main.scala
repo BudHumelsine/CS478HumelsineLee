@@ -1,17 +1,22 @@
 package lang
 
-import scala.io.Source
 
+import scala.io.Source
+//notes
+//to run
+// >>>scalac *.scala
+// >>>scala lang.Main
 
 object Main {  
-  def main(args: Array[String]){    
-    //runProgram("src/files/sample.txt")
+  def main(args: Array[String]){  
+    runProgram("test.txt")
     //new Interpreter().runTests
   }
-/*
+
   def runProgram(filename: String){
     val text = getTextFromFile(filename)
     val tokens = scan(text)
+    println(tokens)
     //val parsed = parse(tokens)
     //println(parsed)
     //val interpreted = interpret(parsed)
@@ -25,7 +30,7 @@ object Main {
   def scan(text: String): List[Token] = {
     new Scanner().scanner(text)
   }
-  
+/*  
   def parse(tokens: List[Token]): List[Statement] = {
     new Parser().parser(tokens)
   }

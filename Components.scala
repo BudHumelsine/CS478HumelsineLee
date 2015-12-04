@@ -41,8 +41,20 @@ case object PrintTok extends Token
 case object ToTok extends Token
 case object UntilTok extends Token
 case object InTok extends Token
+case object IntTok extends Token
+case object StringTok extends Token
+case object VoidTok extends Token
+case object CharTok extends Token
+case object DoubleTok extends Token
+case object BooleanTok extends Token
+case object BeginTok extends Token
+case object EndTok extends Token
 
-  
+
+sealed trait Expr
+sealed trait Value
+
+  /*
 
 //Statements
 sealed trait Expr extends Statement
@@ -114,3 +126,6 @@ sealed trait Value
 //case class Bool(value: Boolean) extends Token with Expr with Value //matches true or false
 case class FunctVal(t: Type, args: TypedArgs, body: BlockStatement, var staticEnv: Map[String, Location]) extends Value
 case class Arr(buf: scala.collection.mutable.ArrayBuffer[Value]) extends Value
+
+
+*/
