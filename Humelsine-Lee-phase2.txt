@@ -173,6 +173,7 @@ Part B: CFG
    | "while" "(" <expr> ")" "{" <any> "}"
    | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
    | "print" "(" <expr> ")" "{}"
+   | return <expr>
   
 Part C: Unambiguous CFG
 <expr> = <expr3>

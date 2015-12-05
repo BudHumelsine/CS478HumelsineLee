@@ -71,7 +71,7 @@ case class LessThan(left: Expr, right: Expr) extends Expr
 case class GreaterThan(left: Expr, right: Expr) extends Expr
 case class And(left: Expr, right: Expr) extends Expr
 case class Or(left: Expr, right: Expr) extends Expr
-case class FunctCall(child: Option[Expr], name: Name, args: Args) extends Expr
+case class FunctCall(name: Name, args: Args) extends Expr
 case class Field(child: Option[Expr], name: Name) extends Expr
 
 sealed trait Dec extends Statement
@@ -81,7 +81,7 @@ case class DecFunct(t: Type, i: Name, args: TypedArgs, body: List[Anything]) ext
 sealed trait Statement
 case class Print(expr: Expr) extends Statement
 case class Reassign(variable: Name, expr: Expr) extends Statement
-case class For(name: String, expr:Expr, choice:String, expr2:Expr, l:List[Anything]) extends State 
+case class For(name: String, expr:Expr, choice:Choice, expr2:Expr, l:List[Anything]) extends State 
 case class While(expr: Expr, l:List[Anything]) extends State 
 case class If(exprIf:Expr, anyIf: List[Anything], exprElseIf:Option[Expr], anyElseIf:List[Anything], anyElse: List[Anything]) extends State
 case class Return(value: Option[Expr] = None) extends Statement
@@ -94,6 +94,10 @@ sealed trait Anything
 case class IsExpr(e:Expr) extends Anything
 case class IsState(s:State) extends Anything
 case class IsDec(d:Dec) extends Anything
+
+sealed trait Choice
+case class Until extends Choice
+case class To extends Choice
 
 
 //Custom Exceptions: should implement more later if time.
@@ -115,12 +119,6 @@ class Location(t: Type, value: Option[Value]){
 }
 //Values
 sealed trait Value
-//Already declared:
-//case class Ent(value: Integer) extends Token with Expr with Value//the name Int is taken
-//case class Flt(value: Float) extends Token with Expr with Value
-//case class Str(name: String) extends Token with Expr with Value //matches items between " and "
-//case class Chr(name: Char) extends Token with Expr with Value //matches a single item between ' and '
-//case class Bool(value: Boolean) extends Token with Expr with Value //matches true or false
 case class FunctVal(t: Type, args: TypedArgs, body: BlockStatement, var staticEnv: Map[String, Location]) extends Value
 case class Arr(buf: scala.collection.mutable.ArrayBuffer[Value]) extends Value
 
