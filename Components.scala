@@ -26,7 +26,7 @@ case class Flt(value: Float) extends Token with Expr with Value
 case class Str(name: String) extends Token with Expr with Value 
 case class Chr(name: Char) extends Token with Expr with Value 
 case class Bool(value: Boolean) extends Token with Expr with Value 
-case class Name(name: String) extends Token //catch names for things such as vars or functions
+case class Name(name: String) extends Token with Expr //catch names for things such as vars or functions
 
 case object AndTok extends Token
 case object OrTok extends Token
@@ -38,7 +38,7 @@ case object ElseTok extends Token
 case object ReturnTok extends Token
 case object WhileTok extends Token
 case object PrintTok extends Token
-case object ToTok extends Token
+case object ToTok extends Token 
 case object UntilTok extends Token
 case object InTok extends Token
 case object IntTok extends Token
@@ -54,7 +54,7 @@ case object EndTok extends Token
 //Statements
 sealed trait Expr extends Statement
 case class ArrExpr(contents: List[Expr]) extends Expr
-case class Name(name: String) extends Expr
+//case class Name(name: String) extends Expr
 //case class Pow(base: Expr, exp: Expr) extends Expr
 case class Mult(left: Expr, right: Expr) extends Expr
 case class Div(left: Expr, right: Expr) extends Expr
@@ -76,28 +76,25 @@ case class Field(child: Option[Expr], name: Name) extends Expr
 
 sealed trait Dec extends Statement
 case class DecVar(t: Type, i: Name, value: Option[Expr] = None) extends Dec
-case class DecFunct(t: Type, i: Name, args: TypedArgs, body: List[Anything]) extends Dec
+case class DecFunct(t: Type, i: Name, args: TypedArgs, body: List[Statement]) extends Dec
   
 sealed trait Statement
 case class Print(expr: Expr) extends Statement
 case class Reassign(variable: Name, expr: Expr) extends Statement
-case class For(name: String, expr:Expr, choice:Choice, expr2:Expr, l:List[Anything]) extends State 
-case class While(expr: Expr, l:List[Anything]) extends State 
-case class If(exprIf:Expr, anyIf: List[Anything], exprElseIf:Option[Expr], anyElseIf:List[Anything], anyElse: List[Anything]) extends State
+case class For(name: String, expr:Expr, choice:Choice, expr2:Expr, l:List[Statement]) extends Statement
+case class While(expr: Expr, l:List[Statement]) extends Statement 
+case class If(exprIf:Expr, anyIf: List[Statement], exprElseIf:Option[Expr], anyElseIf:List[Statement], anyElse: List[Statement]) extends Statement
 case class Return(value: Option[Expr] = None) extends Statement
 
 case class Type(Name: Name, params: Option[List[Type]] = None)
 case class Args(params: List[Expr])
 case class TypedArgs(params: List[(Type, Name)])
 
-sealed trait Anything
-case class IsExpr(e:Expr) extends Anything
-case class IsState(s:State) extends Anything
-case class IsDec(d:Dec) extends Anything
 
 sealed trait Choice
-case class Until extends Choice
-case class To extends Choice
+case object To extends Choice
+case object Until extends Choice
+
 
 
 //Custom Exceptions: should implement more later if time.
@@ -119,6 +116,6 @@ class Location(t: Type, value: Option[Value]){
 }
 //Values
 sealed trait Value
-case class FunctVal(t: Type, args: TypedArgs, body: BlockStatement, var staticEnv: Map[String, Location]) extends Value
+case class FunctVal(t: Type, args: TypedArgs, body: List[Statement], var staticEnv: Map[String, Location]) extends Value
 case class Arr(buf: scala.collection.mutable.ArrayBuffer[Value]) extends Value
 

@@ -7,8 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 class Interpreter {
   type Env = Map[String, Location]
   
-  def interpret(program: List[Statement]): List[Value] = {
-    val output = new ListBuffer[Value]()
+  def interpret(program: List[Statement]): Unit = {
     var returnVal = None: Option[Value]
     
     def arrayMult(arr: Arr, n: Int): Arr = {
@@ -29,7 +28,7 @@ class Interpreter {
       case ArrExpr(list) =>
         val buf = list.to[scala.collection.mutable.ArrayBuffer].map(e => eval(e, env))
         Arr(buf)
-      case Ident(name) =>
+      case Name(name) =>
         val prev = env.get(name)
         prev match{
           case Some(loc) =>
@@ -95,8 +94,8 @@ class Interpreter {
       case GreaterThan(x, y) => Bool(valToFloat(eval(x, env)) > valToFloat(eval(y, env)))
       case And(x, y) => Bool(valToBool(eval(x, env)) && valToBool(eval(y, env)))
       case Or(x, y) => Bool(valToBool(eval(x, env)) || valToBool(eval(y, env)))
-      case FunctCall(ident, args) =>
-        val prev = env.get(ident.name)
+      case FunctCall(name, args) =>
+        val prev = env.get(name.name)
         prev match{
           case Some(loc) =>
             //Make sure loc is storing a function.
@@ -106,12 +105,12 @@ class Interpreter {
                 execFunct(FunctVal(t, a, body, staticEnv), args, env)
               case _ => throw new InvalidStatementException(loc.contents + " is not a function.")
             }
-          case None => throw new UnboundVariableException("Function " + ident.name + " does not have a binding.")
+          case None => throw new UnboundVariableException("Function " + name.name + " does not have a binding.")
         }
       case _ => throw new InvalidExpressionException("Invalid expression: " + expr)
     }
     
-    def valToBool(v: Value): Boolean = v match {]
+    def valToBool(v: Value): Boolean = v match {
       case Bool(x) => x
       case _ => throw new ConversionException("Cannot convert " + v + " to Boolean")
     }
@@ -129,15 +128,15 @@ class Interpreter {
     }
     
     def declare(dec: Dec, env: Env): Env = dec match{
-      case DecVar(t, ident, value) =>
-        if(value == None) env + (ident.name -> new Location(t, None))
+      case DecVar(t, name, value) =>
+        if(value == None) env + (name.name -> new Location(t, None))
         else{
           val v = eval(value.get, env) 
-          env + (ident.name -> new Location(t, Some(v)))
+          env + (name.name -> new Location(t, Some(v)))
         }
-      case DecFunct(t, ident, args, body) =>
+      case DecFunct(t, name, args, body) =>
         val funct = FunctVal(t, args, body, env)
-        val newEnv = env + (ident.name -> new Location(t, Some(funct)))
+        val newEnv = env + (name.name -> new Location(t, Some(funct)))
         //place this function in its own environment to allow recursion.
         funct.staticEnv = newEnv
         newEnv
@@ -158,50 +157,58 @@ class Interpreter {
     def exec(stmts: List[Statement], env: Env): Unit = {
       if(!returnVal.isEmpty) return
       stmts match {
-      case Output(e) +: rest =>
-        output += eval(e, env)
+      case Print(e) +: rest =>
+        println(eval(e, env))
         exec(rest, env)
-      //If(exprIf:Expr, anyIf: List[Statement], exprElseIf:Option[Expr], anyElseIf:List[Statement], anyElse: List[Statement])
       case If(exprIf, anyIf, exprElseIf, anyElseIf, anyElse) +: rest =>
         if (valToBool(eval(exprIf, env))) exec(anyIf, env)
-        else if (exprElseIf.head != None) {
+        else if (exprElseIf.isDefined) {
           var elifList = exprElseIf.toArray
-          //create array of size eliflist filled with falses
-          //
           var elifBody = anyElseIf.toArray
           var flag = false
-          var using = elifList.head
-          for (elem <- elifBody) {
-            if 
-            if (valToBool(elem)) {
-              flag = true
-
+          var elseFlag = false
+          while (!flag) {
+            for (elem <- 0 until elifList.size) {
+              if (elem == elifList.size-1) flag = true
+              val toTest = eval(elifList(elem), env)
+              if (valToBool(toTest)) {
+                flag = true
+                elseFlag = true
+                exec(List(elifBody(elem)), env)
+              }
             }
           }
-
+          if (elseFlag) exec(anyElse, env)
+          exec (rest, env)
         }
-        else for(stmt <- otherwise) exec(List(stmt), env)
-        exec(rest, env)
       case While(cond, body) +: rest =>
-        while(valToBool(eval(cond, env))) exec(List(body), env)
+        while(valToBool(eval(cond, env))) exec(body, env)
         exec(rest, env)
-      case For(dec, cond, change, body) +: rest =>
-        var newEnv = env
-        if(dec != None) newEnv = declare(dec.get, env)
-        while (valToBool(eval(cond, newEnv))) {
-          exec(List(body), newEnv)
-          exec(List(change), newEnv)
+      case For(n,e, c, e2, a) +: rest => 
+        val start = valToInt(eval(e, env)) 
+        val stop = valToInt(eval(e2, env))
+        c match {
+        case Until =>
+          for (x <- start until stop)  {
+            val env3 = env + (n -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            exec(a, env3)
+          }
+        case To =>
+          for (x <- start to stop)  {
+            val env3 = env + (n -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            exec(a, env3)
+          }
         }
         exec(rest, env)
       case (e: Expr) +: rest =>
         eval(e, env)
         exec(rest, env)
-      case DecVar(t, ident, value) +: rest =>
-        exec(rest, declare(DecVar(t, ident, value), env))
-      case DecFunct(t, ident, args, body) +: rest =>
-        exec(rest, declare(DecFunct(t, ident, args, body), env))
-      case Reassign(ident, value) +: rest =>
-        exec(rest, reassign(Reassign(ident, value), env))
+      case DecVar(t, name, value) +: rest =>
+        exec(rest, declare(DecVar(t, name, value), env))
+      case DecFunct(t, name, args, body) +: rest =>
+        exec(rest, declare(DecFunct(t, name, args, body), env))
+      case Reassign(name, value) +: rest =>
+        exec(rest, reassign(Reassign(name, value), env))
       case Return(None) +: rest => returnVal = Some(null)
       case Return(Some(expr)) +: rest => returnVal = Some(eval(expr, env))
       case _ => return //Empty list
@@ -227,14 +234,16 @@ class Interpreter {
       for(i <- 0 to funct.args.params.length -1){
         val expr = args.params(i)
         expr match{
-          case Ident(x) => 
+          case Name(x) => 
             //Call-by-reference
             //Entry in newEnv points the function definition's arg name to the already stored location.
             newEnv += (funct.args.params(i)._2.name -> env(x)) 
-          case Field(None, Ident(x)) =>
+            /*
+          case Field(None, name(x)) =>
             //Call-by-reference
             //Note that OOP is not yet implemented.
             newEnv += (funct.args.params(i)._2.name -> env(x))
+            */
           case _ =>
             //Call-by-value
             val v = eval(expr, env)
@@ -244,7 +253,7 @@ class Interpreter {
       
       newEnv = addFunctions(env, newEnv)
       
-      exec(funct.body.stmts, newEnv)
+      exec(funct.body, newEnv)
       
       if(!returnVal.isEmpty){
         val ret = returnVal.get
@@ -255,5 +264,5 @@ class Interpreter {
     }
     
     exec(program, Map.empty[String, Location])
-    output.toList
   }
+}
