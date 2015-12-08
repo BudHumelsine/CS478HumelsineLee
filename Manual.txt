@@ -99,16 +99,13 @@ Context Free Grammar
 	| <bool>
 	| <str>
 	| <chr>
-	| <ident>
-	| <flt>
 	| '(' <expr> ')'
 	|<expr>
 
-<expr2> = <expr1>
-	<expr2> '**' <expr1>			   
+<expr2> = <expr1>			   
 	| <expr2> '*' <expr1>	
-	| <expr2> '/' <expr1>				
-	| <expr2> '//' <expr1>		
+	| <expr2> '**' <expr1>	
+	| <expr2> '/' <expr1>	
 	| <expr2> '%' <expr1>	
 	| "not " <expr2>					
 	| <expr2> " and " <expr1>			
@@ -126,8 +123,6 @@ Context Free Grammar
 
 <dec> = 
    | <funct>
-   | <expr> "." <ident>
-   | <expr> "." <funct>
    | <type> ":" <ident> "=" <expr>
   
 <stmt> = 
