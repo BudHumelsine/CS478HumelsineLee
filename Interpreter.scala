@@ -49,6 +49,16 @@ class Interpreter {
           case (Flt(n1), Flt(n2)) => Flt(valToFloat(ex) * valToFloat(ey))
           case _ => throw new InvalidExpressionException("Unsupported operation: " + ex + " * " + ey + ".")
         }
+        case Pow(x, y) =>
+        val ex = eval(x, env)
+        val ey = eval(y, env)
+        (ex, ey) match{
+          case (Integer(n1), Integer(n2)) => Integer(scala.math.pow(valToInt(ex), valToInt(ey)))
+          case (Flt(n1), Integer(n2)) => scala.math.pow(valToFloat(ex) ,valToFloat(ey))
+          case (Integer(n1), Flt(n2)) => scala.math.pow(valToFloat(ex) , valToFloat(ey))
+          case (Flt(n1), Flt(n2)) => scala.math.pow(valToFloat(ex) , valToFloat(ey))
+          case _ => throw new InvalidExpressionException("Unsupported operation: " + ex + " ** " + ey + ".")
+        }
       case Div(x, y) =>
         val ex = eval(x, env)
         val ey = eval(y, env)

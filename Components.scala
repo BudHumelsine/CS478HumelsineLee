@@ -62,10 +62,10 @@ case class ArrExpr(contents: List[Expr]) extends Expr
 //case class Pow(base: Expr, exp: Expr) extends Expr
 case class Mult(left: Expr, right: Expr) extends Expr
 case class Div(left: Expr, right: Expr) extends Expr
-case class DivTrunc(left: Expr, right: Expr) extends Expr
 case class Mod(left: Expr, right: Expr) extends Expr
 case class Add(left: Expr, right: Expr) extends Expr
 case class Sub(left: Expr, right: Expr) extends Expr
+case class Pow(left: Expr, right: Expr) extends Expr
 case class Not(expr: Expr) extends Expr
 case class IsEqual(left: Expr, right: Expr) extends Expr
 case class NotEqual(left: Expr, right: Expr) extends Expr

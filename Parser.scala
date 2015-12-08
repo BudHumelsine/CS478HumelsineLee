@@ -195,7 +195,7 @@ class Parser {
       //Parses an Expr from the front of toks and returns that Expr and the unconsumed Tokens.
       parseExpr7(toks)
     }
-    
+    /********************FIX THIS***********
     def parseExprSymbol(toks: List[Token]): (Expr, List[Token]) = toks match{
       //Parses Symbols within Expressions.
       case Symbol(s1) +: LParen +: rest => {
@@ -218,7 +218,7 @@ class Parser {
         }
       }
       case _ => throw new StatementParseException("Invalid symbol: "+toks.head)
-    }
+    } */
     
     def parseArray(toks: List[Token]): (ArrExpr, List[Token]) = toks match{
       //Parses and returns an ArrExpr (implemented with a scala.collection.mutable.ArrayBuffer, the Scala version of Java's ArrayList).
@@ -236,7 +236,7 @@ class Parser {
       }
     }
     
-    def parseExpr0(toks: List[Token]): (Expr, List[Token]) = toks match{
+    def parseExpr1(toks: List[Token]): (Expr, List[Token]) = toks match{
       //Atomic expressions.
       case Integer(v) +: rest => (Integer(v), rest)
       case Flt(v) +: rest => (Flt(v), rest)
@@ -245,67 +245,59 @@ class Parser {
       case Bool(v) +: rest => (Bool(v), rest)
       case Minus +: Integer(v) +: rest => (Integer(-1*v), rest)
       case Minus +: Flt(v) +: rest => (Flt(-1*v), rest)
-      //Symbol will be fully implemented when we begin doing more object-oriented programming.
       case Symbol(n) +: rest => parseExprSymbol(toks)
       case LParen +: rest => { 
         val (e, rest2) = parseExpr(rest)
         rest2 match{
-          case RParen +: rest3 => (e, rest3) //this is correct; do nothing.
+          case RParen +: rest3 => (e, rest3)
           case _ => throw new StatementParseException(") expected.")
         }
       }
-      case LBrack +: rest => parseArray(rest)
       case _ => throw new StatementParseException("Invalid symbol: " + toks.head)
     }
-    
-    def parseExpr1(toks: List[Token]): (Expr, List[Token]) = {
-      //Exponentiation.
-      //Note: exponentiation gets handled right to left.
-      //Recursive: <expr1> = <expr0> "**" <expr1> | <expr0>
-      //Iterative: <expr1> = <expr0> ("**" <expr1>)*
-      val (base, toks2) = parseExpr0(toks)
-      toks2 match{
-        case Ast +: Ast +: rest =>
-          val (exp, toks3) = parseExpr1(toks2.tail.tail)
-          (Pow(base, exp), toks3)
-        case _ => (base, toks2)
-      }
-    }
-    
+
     def parseExpr2(toks: List[Token]): (Expr, List[Token]) = {
-      //Multiplication, division, divide and truncate, modulo.
-      //Recursive: <expr2> = <expr2> "*" <expr1> | <expr1>
-      //Iterative: <expr2> = <expr1> ("*" <expr1>)*
-      var (left, toks2) = parseExpr1(toks)
-      var exit = false
-      while(!exit){
-        toks2 match{
-          case Ast +: rest => {
-            val (right, toks3) = parseExpr1(rest)
-            left = Mult(left, right)
-            toks2 = toks3 }
-          case Slash +: Slash +: rest => {
-            val (right, toks3) = parseExpr1(rest)
-            left = DivTrunc(left, right)
-            toks2 = toks3 }
-          case Slash +: rest => {
-            val (right, toks3) = parseExpr1(rest)
-            left = Div(left, right)
-            toks2 = toks3 }
-          case Percent +: rest =>{
-            val (right, toks3) = parseExpr1(rest)
-            left = Mod(left, right)
-            toks2 = toks3 }
-          case _ => exit = true
-        }
+      if(toks.headOption == Some(NotTok)) {
+      val (e, toks2) = parseExpr4(toks.tail)
+      (Not(e), toks2)
       }
-      (left, toks2)
+      else {
+        var (left, toks2) = parseExpr1(toks)
+        var exit = false
+        while(!exit){
+          toks2 match{
+            case Ast +: Ast +: rest => 
+              val (right, toks3) parseExpr(rest)
+              left = Pow(left,right)
+              toks2 = toks3
+            case Ast +: rest => {
+              val (right, toks3) = parseExpr1(rest)
+              left = Mult(left, right)
+              toks2 = toks3 }
+            case Slash +: rest => {
+              val (right, toks3) = parseExpr1(rest)
+              left = Div(left, right)
+              toks2 = toks3 }
+            case Percent +: rest =>{
+              val (right, toks3) = parseExpr1(rest)
+              left = Mod(left, right)
+              toks2 = toks3 }
+            case OrTok +: rest => {
+              val (right, toks3) = parseExpr6(rest)
+              left = Or(left, right)
+              toks2 = toks3 }
+            case AndTok +: rest => {
+              val (right, toks3) = parseExpr5(rest)
+              left = And(left, right)
+              toks2 = toks3 }
+            case _ => exit = true
+          }
+        }
+        (left, toks2)
+      }
     }
     
     def parseExpr3(toks: List[Token]): (Expr, List[Token]) = {
-      //Addition, subtraction.
-      //Recursive: <expr3> = <expr3> "+" <expr2> | <expr2>
-      //Iterative: <expr3> = <expr2> ("+" <expr2>)*
       var (left, toks2) = parseExpr2(toks)
       var exit = false
       while(!exit){
@@ -318,32 +310,6 @@ class Parser {
             val (right, toks3) = parseExpr2(rest)
             left = Sub(left, right)
             toks2 = toks3 }
-          case _ => exit = true
-        }
-      }
-      (left, toks2)
-    }
-    
-    def parseExpr4(toks: List[Token]): (Expr, List[Token]) = {
-      //Not.
-      //Note: using the recursive definition here is not problematic since there is no left recursion.
-      //Recursive: <expr4> = "not" <expr4> | <expr3>
-      //Iterative: <expr4> = ("not")* <expr3>
-      if(toks.headOption == Some(NotTok)) {
-        val (e, toks2) = parseExpr4(toks.tail)
-        (Not(e), toks2)
-      }
-      else parseExpr3(toks)
-    } 
-    
-    def parseExpr5(toks: List[Token]): (Expr, List[Token]) = {
-      //Comparators.
-      //Recursive: <expr5> = <expr5> "==" <expr4> | <expr4>
-      //Iterative: <expr5> = <expr4> ("==" <expr4>)*
-      var (left, toks2) = parseExpr4(toks)
-      var exit = false
-      while(!exit){
-        toks2 match{
           case Equals +: Equals +: rest => {
             val (right, toks3) = parseExpr4(rest)
             left = IsEqual(left, right)
@@ -367,42 +333,6 @@ class Parser {
           case RAngle +: rest => {
             val (right, toks3) = parseExpr4(rest)
             left = GreaterThan(left, right)
-            toks2 = toks3 }
-          case _ => exit = true
-        }
-      }
-      (left, toks2)
-    }
-    
-    def parseExpr6(toks: List[Token]): (Expr, List[Token]) = {
-      //And.
-      //Recursive: <expr6> = <expr6> "and" <expr5> | <expr5>
-      //Iterative: <expr5> = <expr5> ("and" <expr5>)*
-      var (left, toks2) = parseExpr5(toks)
-      var exit = false
-      while(!exit){
-        toks2 match{
-          case AndTok +: rest => {
-            val (right, toks3) = parseExpr5(rest)
-            left = And(left, right)
-            toks2 = toks3 }
-          case _ => exit = true
-        }
-      }
-      (left, toks2)
-    }
-    
-    def parseExpr7(toks: List[Token]): (Expr, List[Token]) = {
-      //Or.
-      //Recursive: <expr7> = <expr7> "or" <expr6> | <expr6>
-      //Iterative: <expr7> = <expr6> ("or" <expr6>)*
-      var (left, toks2) = parseExpr6(toks)
-      var exit = false
-      while(!exit){
-        toks2 match{
-          case OrTok +: rest => {
-            val (right, toks3) = parseExpr6(rest)
-            left = Or(left, right)
             toks2 = toks3 }
           case _ => exit = true
         }

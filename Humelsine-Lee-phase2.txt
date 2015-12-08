@@ -24,7 +24,7 @@ False - boolean literal for false.
 
 -Symbols:
 #  - comment. Everything until the next \n character is ignored.
-#* - indicates the start of a block comment. Ends with *#.
+#* ... *# - indicates the start of a block comment. Ends with *#.
 == - test for equality. Evaluates to either true or false.
 >  - boolean greater than. Evaluates to either true or false.
 >= - boolean greater than or equal to. Evaluates to either true or false.
@@ -35,7 +35,6 @@ False - boolean literal for false.
 += - increment by the specified value and reassign.
 -= - decrement by the specified value and reassign.
      These operators, like the ++ and -- operators, can only be used on a line by themselves.
-// - floor function
 =  - (re)assignment operator. Only one assignment may occur per statement in order to avoid confusion.
      For example, one could not write: int a = 1 + sum(int[] myArray = [1, 2, 3, 4, 5]);
 	 Also note that when a variable is initially assigned, it must include a type declaration explicitly.
@@ -172,16 +171,13 @@ Part C: Unambiguous CFG
 	| <bool>
 	| <str>
 	| <chr>
-	| <ident>
-	| <flt>
 	| '(' <expr> ')'
 	|<expr>
 
-<expr2> = <expr1>
-	<expr2> '**' <expr1>			   
+<expr2> = <expr1>			   
 	| <expr2> '*' <expr1>	
-	| <expr2> '/' <expr1>				
-	| <expr2> '//' <expr1>		
+	| <expr2> '**' <expr1>	
+	| <expr2> '/' <expr1>	
 	| <expr2> '%' <expr1>	
 	| "not " <expr2>					
 	| <expr2> " and " <expr1>			
@@ -199,8 +195,6 @@ Part C: Unambiguous CFG
 
 <dec> = 
    | <funct>
-   | <expr> "." <ident>
-   | <expr> "." <funct>
    | <type> ":" <ident> "=" <expr>
   
 <stmt> = 
