@@ -1,16 +1,6 @@
-#John Humelsine
-#James Lee
+*******User Manual********
 
-Part A: Lexical Syntax
--Whitespace: whitespace (indents and line breaks) will not be mandatory in any circumstance except to separate different tokens.
-In this case, any form of whitespace is acceptable (space, tab, new line).
-Statements will be delimited by curly braces.
-
--Case Sensitivity: the language is case sensitive.
-
--Notation: notation will be infix. That is, operators will be placed between their operands (1+2).
-
--Legal identifiers: any combination of the characters a-z, A-Z, 0-9, and _ BUT must start with either a-z or A-Z.
+This is a language based on Python, Scala, Java, and C
 
 -Literals: *** more examples
 123 - int literal for the integer 123.
@@ -105,73 +95,10 @@ try - used together with the except statement to handle errors.
 except - used together with the try statement to handle errors.
 print("string") - prints the given string 
 
-			 
-Regular Expressions for Variable Tokens:
--Valid Identifiers: [a-zA-z][a-zA-Z0-9_]*
--Int Literals: -?[1-9][0-9]* *** doesn't include 0
--Float Literals: -?[0-9]*"."[0-9]+ 
--String Literals: \".*\" #Here, I escape the quotes because I want LITERALLY the quotes surrounding any number of any character. Something like a double quote is not allowed. Many languages have different end of line character counts so line break handling is hairy.
--Char Literals: \'.\' #Once again, I escape the '' *** same issue as with String Literals
 
+this language is case sensitive, but white space does not matter.
 
-Part B: CFG
-#Here are some common definitions that will be used later on.
-<ident> = [a-zA-Z][a-zA-Z0-9_]*
-<int> = -?[1-9][0-9]*
-<flt> = -?[0-9]*"."[0-9]+
-<num> = <int> | <flt>
-<str> = \".*\"
-<chr> = \'.\'
-<bool> = "True" | "False" 
-<type> = "Int" | "String" | "Void" | "Char" | "Double" | "Boolean"
-<args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
-<funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
-        | <ident> "." <funct>
-<any> = <stmt> | <dec> | <expr>
-
-1.Expressions
-<expr> = 
-	   #Numerical operations:
-	   <num>
-       | '(' <expr> ')'					
-	   | <expr> '**' <expr>				
-	   | <expr> '*' <expr>				
-	   | <expr> '/' <expr>				
-	   | <expr> '//' <expr>				
-	   | <expr> '%' <expr>				
-	   | <expr> '+' <expr>				
-	   | <expr> '-' <expr>				
-	   | <bool>
-	   | "not " <expr>					
-	   | <expr> " and " <expr>			
-	   | <expr> " or " <expr>			
-	   | <expr> "==" <expr>				
-	   | <expr> "!=" <expr>				
-	   | <expr> "<=" <expr>				
-	   | <expr> ">=" <expr>				
-	   | <expr> "<" <expr>				
-	   | <expr> ">" <expr>				
-	   | <str>
-	   | <chr>
-	   | <ident>
-	   
-2.Declarations
-<dec> = 
-   | <funct>
-   | <expr> "." <ident>
-   | <expr> "." <funct>
-   | <type> ":" <ident> "=" <expr>
-   
-3.Statements
-  
-<stmt> = 
-   | "for" "(" <ident> "in" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
-   | "while" "(" <expr> ")" "{" <any> "}"
-   | "if" "(" <expr> ")" "{" <any> "}" ( "else if" "(" <expr> ")" "{" <any> "}")* ("else" "{" <any> "}")?
-   | "print" "(" <expr> ")" "{}"
-   | return <expr>
-  
-Part C: Unambiguous CFG
+Context Free Grammar
 <expr> = <expr3>
 
 
@@ -230,3 +157,72 @@ Part C: Unambiguous CFG
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
 
+
+*****Examples********
+
+***Note: ...foo... is used to mean anything can be placed here
+
+Variables are declared with the type, a colon, and the value
+Int: x = 5
+Bool: flag = true
+
+Functions are declared in a similar fashion with return type, followed by the name, parameters in parenthesis, a begin statement and an end statement
+Bool function(Bool: paramater1, Int: parameter2) BEGIN function
+...foo...
+END function
+
+Int noParameterFunction() BEGIN noParameterFunction
+...foo...
+END function
+
+Loops:
+FOR
+A for loop is instantiated with the "for" keyword, followed by the variable, and one integer to or until another integer
+for (x in 1 until 5){
+	...foo...
+}
+for (y in 2 to 6){
+	...foo...
+}
+
+WHILE
+a while loop is instantiated with the keyword "while", followed by a boolean
+while(true) {
+	...foo...	
+}
+
+while(x < 5){
+	...foo...
+}
+
+IF
+an if statement is instantiated with the keyword "if" and some boolean value, followed by any number of "else if" statements and an options else
+if (x < 5){
+	...foo...
+}
+else if (x > 5){
+	...foo...
+}
+else {
+	...foo...
+}
+
+if (x < 5){
+	...foo...
+}
+if (x == 5){
+	...foo...
+}
+else {
+	...foo...
+}
+
+PRINT
+a print statement is instantiated with the word print
+print("x")
+print(y)
+
+RETURN
+a return statement returns the value following the keyword, and ending a function early
+return x
+return "This is a return statement"
