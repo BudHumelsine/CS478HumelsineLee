@@ -9,7 +9,7 @@ import scala.io.Source
 
 object Main {  
   def main(args: Array[String]){  
-    runProgram("test.txt")
+    runProgram("phase1.txt")
     //new Interpreter().runTests
   }
 
@@ -17,9 +17,9 @@ object Main {
     val text = getTextFromFile(filename)
     val tokens = scan(text)
     println(tokens)
-    //val parsed = parse(tokens)
-    //println(parsed)
-    //val interpreted = interpret(parsed)
+    val parsed = parse(tokens)
+    println(parsed)
+    val interpreted = interpret(parsed)
     //println(interpreted)
   }
   
@@ -31,13 +31,12 @@ object Main {
   def scan(text: String): List[Token] = {
     new Scanner().scanner(text)
   }
-/*  
+ 
   def parse(tokens: List[Token]): List[Statement] = {
     new Parser().parser(tokens)
   }
   
-  def interpret(program: List[Statement]): List[Value] = {
+  def interpret(program: List[Statement]): Unit = {
     new Interpreter().interpret(program)
   }
-  */
 }

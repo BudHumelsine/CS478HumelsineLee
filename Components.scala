@@ -65,7 +65,6 @@ case class Div(left: Expr, right: Expr) extends Expr
 case class Mod(left: Expr, right: Expr) extends Expr
 case class Add(left: Expr, right: Expr) extends Expr
 case class Sub(left: Expr, right: Expr) extends Expr
-case class Pow(left: Expr, right: Expr) extends Expr
 case class Not(expr: Expr) extends Expr
 case class IsEqual(left: Expr, right: Expr) extends Expr
 case class NotEqual(left: Expr, right: Expr) extends Expr
@@ -76,7 +75,7 @@ case class GreaterThan(left: Expr, right: Expr) extends Expr
 case class And(left: Expr, right: Expr) extends Expr
 case class Or(left: Expr, right: Expr) extends Expr
 case class FunctCall(name: Name, args: Args) extends Expr
-case class Field(child: Option[Expr], name: Name) extends Expr
+//case class Field(child: Option[Expr], name: Name) extends Expr
 
 sealed trait Dec extends Statement
 case class DecVar(t: Type, i: Name, value: Option[Expr] = None) extends Dec
@@ -85,11 +84,10 @@ case class DecFunct(t: Type, i: Name, args: TypedArgs, body: List[Statement]) ex
 sealed trait Statement
 case class Print(expr: Expr) extends Statement
 case class Reassign(variable: Name, expr: Expr) extends Statement
-case class For(name: String, expr:Expr, choice:Choice, expr2:Expr, l:List[Statement]) extends Statement
+case class For(name: Name, expr:Expr, choice:Choice, expr2:Expr, l:List[Statement]) extends Statement
 case class While(expr: Expr, l:List[Statement]) extends Statement 
 case class If(exprIf:Expr, anyIf: List[Statement], exprElseIf:Option[List[Expr]], anyElseIf:List[List[Statement]], anyElse: List[Statement]) extends Statement
 case class Return(value: Option[Expr] = None) extends Statement
-case class DecVar(type: Name, name: Name, value: Expr)
 
 case class Type(Name: Name, params: Option[List[Type]] = None)
 case class Args(params: List[Expr])

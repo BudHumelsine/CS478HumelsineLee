@@ -1,10 +1,11 @@
 print("Hello world")
 
-"Hello"
+print("Hello")
 #"(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
 Int test (Int:Bud, String:Joe)
 BEGIN test
 Int:x = 5
+print(x)
 END test
 
 while (2 < 5) { print("Test")}

@@ -175,7 +175,8 @@ Part C: Unambiguous CFG
 	|<expr>
 
 <expr2> = <expr1>			   
-	| <expr2> '*' <expr1>
+	| <expr2> '*' <expr1>	
+	| <expr2> '**' <expr1>	
 	| <expr2> '/' <expr1>	
 	| <expr2> '%' <expr1>	
 	| "not " <expr2>					

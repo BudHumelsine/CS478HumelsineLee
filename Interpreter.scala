@@ -49,16 +49,6 @@ class Interpreter {
           case (Flt(n1), Flt(n2)) => Flt(valToFloat(ex) * valToFloat(ey))
           case _ => throw new InvalidExpressionException("Unsupported operation: " + ex + " * " + ey + ".")
         }
-        case Pow(x, y) =>
-        val ex = eval(x, env)
-        val ey = eval(y, env)
-        (ex, ey) match{
-          case (Integer(n1), Integer(n2)) => Integer(scala.math.pow(valToInt(ex), valToInt(ey)))
-          case (Flt(n1), Integer(n2)) => scala.math.pow(valToFloat(ex) ,valToFloat(ey))
-          case (Integer(n1), Flt(n2)) => scala.math.pow(valToFloat(ex) , valToFloat(ey))
-          case (Flt(n1), Flt(n2)) => scala.math.pow(valToFloat(ex) , valToFloat(ey))
-          case _ => throw new InvalidExpressionException("Unsupported operation: " + ex + " ** " + ey + ".")
-        }
       case Div(x, y) =>
         val ex = eval(x, env)
         val ey = eval(y, env)
@@ -184,7 +174,7 @@ class Interpreter {
               if (valToBool(toTest)) {
                 flag = true
                 elseFlag = true
-                exec(elifBody(elem), env)
+                exec(List(elifBody(elem)), env)
               }
             }
           }
@@ -195,22 +185,22 @@ class Interpreter {
         while(valToBool(eval(cond, env))) exec(body, env)
         exec(rest, env)
       case For(n,e, c, e2, a) +: rest => 
-        var name = null
+        var name = ""
         n match {
           case Name(y) => name = y
           case _ => throw new ConversionException("Missing a valid variable name")
-        }
+        } 
         val start = valToInt(eval(e, env)) 
         val stop = valToInt(eval(e2, env))
         c match {
         case Until =>
           for (x <- start until stop)  {
-            val env3 = env + (name -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            val env3 = env + (name -> new Location(Type(Name("Int")), Some(Integer(x))))
             exec(a, env3)
           }
         case To =>
           for (x <- start to stop)  {
-            val env3 = env + (name -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            val env3 = env + (name -> new Location(Type(Name("Int")), Some(Integer(x))))
             exec(a, env3)
           }
         }
@@ -225,7 +215,9 @@ class Interpreter {
       case Reassign(name, value) +: rest =>
         exec(rest, reassign(Reassign(name, value), env))
       case Return(None) +: rest => returnVal = Some(null)
-      case Return(Some(expr)) +: rest => returnVal = Some(eval(expr, env))
+      case Return(Some(expr)) +: rest => 
+        exec(List(Print(expr)), env)
+        returnVal = Some(eval(expr, env))
       case _ => return //Empty list
       }
     }
