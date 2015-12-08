@@ -3,19 +3,19 @@
 
 #***Major characteristics and syntax of language***
 #*
-Functions are declared and written in the following form:
-    [return type] [name] ([Type1: arg1]*]) START [name] [body] END [name]
+#Functions are declared and written in the following form:
+    #[return type] [name] ([Type1: arg1]*]) START [name] [body] END [name]
     
 As is evident, our language forces type-checking on function outputs and arguments. 
 The language is case-sensitive; types are always capitalized, and keywords "START" and "END" always begin and conclude the body of a function.
 Comments follow every '#' symbol; this is subject to change in the final version.
-Block comments are instantiated by #* and end with *#.
+Block comments are instantiated by #* and end with *#
+#*
 Curly braces are required to denote the start and end of statements.
 All variable declarations are accompanied by capitalized [Type] followed by a colon, i.e. Int: x = 5.
 *#
   #There will only be one print function: print.
   #Finally, statements will be delimited with a curly braces.
-  #
   print("Hello, world!"){}
   
   #"If" statement syntax requires mandatory parentheses.
@@ -36,9 +36,10 @@ START xToFive
 Int: x = 0
 x += 1
 for (x in x until 5) {
-  print(x)
+  print(x){}
 }
 END xToFive
+
 
 Void intOperations(Int: x, Int: y, Int: z)
 START intOperations
@@ -48,7 +49,7 @@ Int: z = 4
 if (x*y < (27 + z) and not False) {
   Int: z = x * y
 }
-if (True) print(z){}
+if (True) {print(z){}}
 END intOperations
 
 Float floatWhile(Float: x)
@@ -63,7 +64,7 @@ if (x == 10.0) {
 else if (x > 10.0) {
   print("x is greater than 10.0"){}
 }
-else print("x is less than 10.0 and the while loop does not work"){}
+else {print("x is less than 10.0 and the while loop does not work"){}}
 return x
 END floatWhile
 

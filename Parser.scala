@@ -16,60 +16,33 @@ class Parser {
       statements.toList //doesnt this have to be reversed?
     }
     
-    def curlyBraceChecker(toks: List[Token]): List[Token] = toks match{
-      case RCurly +: rest => rest
-      case _ => throw new StatementParseException("} expected.")
-    }
     
     def parseStatement(toks: List[Token]): (Statement, List[Token]) = toks match{
-      //Returns the statement that results from the input, and a List of the unconsumed Tokens.
-      //If a statement begins with a token not described in the CFG, throws Exception.
-      case BeginTok +: rest => 
-        val (stmt, rest2) = parseExpr(LParen +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case LParen +: rest => 
-        val (stmt, rest2) = parseExpr(LParen +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case LBrack +: rest => 
-        val (stmt, rest2) = parseExpr(LBrack +: rest)
-        (stmt, curlyBraceChecker(rest2))
+      case BeginTok +: rest => parseExpr(LParen +: rest)
+      case LParen +: rest =>  parseExpr(LParen +: rest)
+      case LBrack +: rest =>  parseExpr(LBrack +: rest)
       //case LCurly +: rest => parseBlockStatements(rest.head) +: rest.tail
       case LCurly +: rest => throw new StatementParseException("Unexpected {")
-      case Minus +: rest => //Could begin a negative number
-        val (stmt, rest2) = parseExpr(Minus +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case Integer(v) +: rest => 
-        val (stmt, rest2) = parseExpr(Integer(v) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case Flt(v) +: rest => 
-        val (stmt, rest2) = parseExpr(Flt(v) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case Str(n) +: rest => 
-        val (stmt, rest2) = parseExpr(Str(n) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case Chr(n) +: rest => 
-        val (stmt, rest2) = parseExpr(Chr(n) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case Bool(v) +: rest =>
-        val (stmt, rest2) = parseExpr(Bool(v) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      //Be careful with Symbol.
-      //Could begin an expression, a declaration, or a reassignment statement.
-      case Symbol(n) +: rest =>
-        val (stmt, rest2) = parseSymbol(Symbol(n) +: rest)
-        (stmt, curlyBraceChecker(rest2))
-      case NotTok +: rest => 
-        val (stmt, rest2) = parseExpr(NotTok +: rest)
-        (stmt, curlyBraceChecker(rest2))
+      case Minus +: rest => parseExpr(Minus +: rest)
+      case Integer(v) +: rest => parseExpr(Integer(v) +: rest)
+      case Flt(v) +: rest => parseExpr(Flt(v) +: rest)
+      case Str(n) +: rest => parseExpr(Str(n) +: rest)
+      case Chr(n) +: rest =>parseExpr(Chr(n) +: rest)
+      case Bool(v) +: rest =>parseExpr(Bool(v) +: rest)
+      case Symbol(n) +: rest =>parseSymbol(Symbol(n) +: rest)
+      case NotTok +: rest => parseExpr(NotTok +: rest)
       case ForTok +: rest => parseFor(rest)
-      case IfTok +: rest => 
-        val (ifStatement, rest2) = parseIf(rest)
-        (ifStatement, rest2)
+      case IfTok +: rest => parseIf(rest)
       case WhileTok +: rest => parseWhile(rest)
       case ReturnTok +: rest => parseReturn(rest)
       case PrintTok +: LParen +: rest =>
-        val (expr, rest2) = parseExpr(LParen +: rest)
-        (Print(expr), curlyBraceChecker(rest2))
+        val (expr, rest2) = parseExpr(rest)
+        if(rest2.headOption != Some(RParen)) throw new StatementParseException(") expected.")
+        var rest3 = rest2.tail
+        if(rest3.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
+        rest3 = rest3.tail
+        if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+        (Print(expr), rest3.tail)
       //Anything else is an invalid start of a statement.
       case _ => throw new StatementParseException("Invalid symbol: "+toks.head)
     }
@@ -124,9 +97,10 @@ class Parser {
       var (cond2, rest4) = parseExpr(rest3.tail)
       if(rest4.headOption != Some(RParen)) throw new StatementParseException(") expected.")
       rest4 = rest4.tail
-      if(rest4.headOption != Some(LBrack)) throw new StatementParseException("{ expected.")
+      if(rest4.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
       val (body, rest5) = parseBlockStatements(rest4.tail)
-      (For(name, cond, choice, cond2, body), rest5)
+      if(rest5.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+      (For(name, cond, choice, cond2, body), rest5.tail)
     }
     
     def parseIf(toks: List[Token]): (If, List[Token]) = {
@@ -135,36 +109,44 @@ class Parser {
       var exprElseIf:List[Expr] = List() 
       var anyElseIf:List[List[Statement]] = List()
       var anyElse:List[Statement] = List()     
-      if (toks.headOption != Some(RParen)) throw new StatementParseException("( expected")
-      val (cond, rest) = parseExpr(toks.tail)
+      if (toks.headOption != Some(LParen)) throw new StatementParseException("( expected")
+      var (cond, rest) = parseExpr(toks.tail)
       exprIf = cond
-      val (ifBody, rest2) = parseBlockStatements(rest)
+      if (rest.headOption != Some(RParen)) throw new StatementParseException(") expected")
+      rest=rest.tail
+      if (rest.headOption != Some(LCurly)) throw new StatementParseException("{ expected")
+      val (ifBody, rest2) = parseBlockStatements(rest.tail)
       anyIf = ifBody
       if (rest2.headOption != Some(RCurly)) throw new StatementParseException("} expected")
       rest2.tail match {
-        case ElseTok +: IfTok +: rest3 =>
+        case ElseTok +: IfTok +: LParen +: rest3 =>
           var toksLeft = rest3
           while (toksLeft.size > 0) {
             var (cond2, rest4) = parseExpr(toksLeft)
             exprElseIf = cond2 +: exprElseIf
-            var (elseIfBody, rest5) = parseBlockStatements(rest4)
+            if (rest4.headOption != Some(RParen)) throw new StatementParseException("( expected")
+            rest4 = rest4.tail
+            if (rest4.headOption != Some(LCurly)) throw new StatementParseException("{ expected")
+            var (elseIfBody, rest5) = parseBlockStatements(rest4.tail)
             anyElseIf = elseIfBody +: anyElseIf
             rest5 match {
-              case RCurly +: ElseTok +: IfTok +: rest9 => toksLeft = rest9
-              case RCurly +: ElseTok +: rest9 => 
+              case RCurly +: ElseTok +: IfTok +: LParen +: rest9 => toksLeft = rest9
+              case RCurly +: ElseTok +: LCurly +: rest9 => 
                 val (elseBody, rest6) = parseBlockStatements(rest9.tail)
                 anyElse = elseBody
+                if (rest6.headOption != Some(RCurly)) throw new StatementParseException("( expected")
                 return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest6)
               case RCurly +: rest9 => return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest9)
               case _ => throw new StatementParseException("Missing }")
             }
           }
-        case ElseTok +: rest2 => 
+        case ElseTok +: LCurly +: rest2 => 
           val (elseBody, rest3) = parseBlockStatements(rest2)
           anyElse = elseBody
-          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3)
-        case _ => 
-          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2)
+          if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3.tail)
+        case _ =>
+          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2.tail)
       }
       (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2)
     }
@@ -176,7 +158,8 @@ class Parser {
       var rest2 = rest.tail
       if(rest2.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
       val (stmt, rest3) = parseBlockStatements(rest2.tail)
-      (While(cond, stmt), rest3)
+      if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+      (While(cond, stmt), rest3.tail)
     }
     
     def parseReturn(toks: List[Token]): (Statement, List[Token]) = {
@@ -198,8 +181,6 @@ class Parser {
     }
     
     def parseArray(toks: List[Token]): (ArrExpr, List[Token]) = toks match{
-      //Parses and returns an ArrExpr (implemented with a scala.collection.mutable.ArrayBuffer, the Scala version of Java's ArrayList).
-      //Begins after first [.
       case RBrack +: rest => (ArrExpr(List.empty), rest)
       case _ => {
         val (arg, rest) = parseExpr(toks)
@@ -329,11 +310,9 @@ class Parser {
     }
 
     def parseTypedArgs(toks: List[Token]): (TypedArgs, List[Token]) = toks match{
-      //Parses a series of typed arguments until it hits an RParen token.
-      //Returns the compiled TypedArgs and the unconsumed tokens.
       case RParen +: rest => (TypedArgs(List.empty[(Type, Name)]), rest)
       case Symbol(s1) +: Symbol(s2) +: RParen +: rest => (TypedArgs((Type(Name(s1)), Name(s2)) +: List.empty[(Type, Name)]), rest)
-      case Symbol(s1) +: Symbol(s2) +: Comma +: Symbol(s3) +: rest => { //The final symbol guarantees that this is not followed by )
+      case Symbol(s1) +: Symbol(s2) +: Comma +: Symbol(s3) +: rest => { 
         val (args, rest2) = parseTypedArgs(Symbol(s3) +: rest)
         (TypedArgs((Type(Name(s1)), Name(s2)) +: args.params), rest2)
       }
@@ -341,9 +320,6 @@ class Parser {
     }
     
     def parseBlockStatements(toks: List[Token]): (List[Statement], List[Token]) = toks match{
-      //Parses a series of statements until it hits an RCurly token.
-      //Returns the compiled Statements and the unconsumed tokens.
-      //Begins immediately after first LCurly.
       case RCurly +: rest => (List.empty[Statement], rest)
       case _ => {
         val (s, rest) = parseStatement(toks)

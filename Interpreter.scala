@@ -243,14 +243,8 @@ class Interpreter {
         expr match{
           case Name(x) => 
             //Call-by-reference
-            //Entry in newEnv points the function definition's arg name to the already stored location.
             newEnv += (funct.args.params(i)._2.name -> env(x)) 
             /*
-          case Field(None, name(x)) =>
-            //Call-by-reference
-            //Note that OOP is not yet implemented.
-            newEnv += (funct.args.params(i)._2.name -> env(x))
-            */
           case _ =>
             //Call-by-value
             val v = eval(expr, env)

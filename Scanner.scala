@@ -15,10 +15,8 @@ class Scanner {
       else if(c == '{') LCurly +: scan(i+1)
       else if(c == '}') RCurly +: scan(i+1)
       else if(c == ',') Comma +: scan(i+1)
-      else if(c == '.') {
-        if(i+1 == text.length || !text(i+1).isDigit) Dot +: scan(i+1)
-        else scanDigits(i)
-      }
+      else if(c == '.') scanDigits(i)
+
       else if(c == '/') Slash +: scan(i+1)
       else if(c == '+') Plus +: scan(i+1)
       else if(c == '-') Minus +: scan(i+1)
