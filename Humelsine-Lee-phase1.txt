@@ -1,12 +1,17 @@
 #John Humelsine
 #James Lee
 
-#Comments follow every '#' symbol; this is subject to change in the final version.
-#Block comments are instantiated by #* and end with *#.
-#Each function will be written in the following form: [return type] [name]([Type1: arg1], [Type2: arg2], etc.) START [name] [body] END [name]
-#START and END keywords are required to indicate the beginning and end of a function.
-#Curly braces are required to denote the start and end of statements.
-#All variable declarations are accompanied by capitalized Type followed by a colon, i.e. Int: x = 5.
+***Major characteristics and syntax of language***
+
+Functions are declared and written in the following form:
+    [return type] [name] ([Type1: arg1]*]) START [name] [body] END [name]
+    
+As is evident, our language forces type-checking on function outputs and arguments. 
+The language is case-sensitive; types are always capitalized, and keywords "START" and "END" always begin and conclude the body of a function.
+Comments follow every '#' symbol; this is subject to change in the final version.
+Block comments are instantiated by #* and end with *#.
+Curly braces are required to denote the start and end of statements.
+All variable declarations are accompanied by capitalized [Type] followed by a colon, i.e. Int: x = 5.
 
   #There will only be one print function: print.
   #Finally, statements will be delimited with a curly braces.
@@ -16,151 +21,49 @@
   #"If" statement syntax requires mandatory parentheses.
   #Parentheses are also required when calling functions.
   #Also like Python, if statements are evaluated based on the following rules:
-  #  0 is false
-  #  [] is false
-  #  null is false
-  #  everything else (i.e. 1, 5, -20, non-null object, true) is true
+  #  0 is False
+  #  [] is False
+  #  null is False
+  #  everything else (i.e. 1, 5, -20, non-null object, True) is true
   if (binarySearch(myArray, 3)) {
     print("3 is an element of the array"){}
   }
 
-#Example 1: Binary Search
-#Source: http://interactivepython.org/runestone/static/pythonds/SortSearch/TheBinarySearch.html
+#The following are examples of functions, declarations, and programs in our language.
 
-
-[return type] [name]([Type1: arg1], [Type2: arg2], etc.) START [name] [body] END [name]
-#Here, we require an Array and an object of type Ordered.
-#This is used much as in Scala/Java to denote instances of objects that implement the interface Ordered (which supports comparisons).
-
-#Instead, a class may inherit from only one class, but may implement as many interfaces as desired.
-#This is to prevent the diamond problem.
-#All objects inherit from class Object.
-boolean binarySearch(Array: arr, Int: target) 
-BEGIN binarySearch
-  #Even if only one statement is enclosed, our language requires each statement to be enclosed by curly braces.
-  
-  if (arr.length == 0) {return False}
-  
-  #The // operator is used here as the floor function.
-
-  Int: midpoint = arr.length//2
-  
-  #[] are used to access an element in an Array.
-  if (arr[midpoint] == target) {return True}
-  else{
-    #Array slicing is implemented as in Python.
-    if (item < arr[midpoint]) return binarySearch(arr[:midpoint], target)
-	else return binarySearch(arr[midpoint+1:], target)
-  }
-END binarySearch
-
-#Example 2: Merge Sort
-#Source: http://interactivepython.org/runestone/static/pythonds/SortSearch/TheMergeSort.html
-#The algorithm was implemented as described here, but was translated into our language.
-#Writing the algorithm was not the intent behind this homework; this was discussed with the instructor.
-
-#When the return type of a function is void, no return statement is required.
-void mergeSort(Ordered[] arr){
-  #Also note that length is a method of class Collection.
-  #Interestingly, it does not use parentheses like other functions.
-  #It is the same way in Java, for purely historical reasons.
-  #It is implemented here, too, for familiarity.
-  if arr.length <= 1 return;
-  int mid = arr.length//2;
-  Ordered[] leftHalf = arr[:mid];
-  Ordered[] rightHalf = arr[mid:];
-  
-  #There is no special syntax to conduct a recursive call.
-  mergeSort(leftHalf);
-  mergeSort(rightHalf);
-  
-  #Multiple variables of the same type can be instantiated at once:
-  int i = 0, j = 0, k = 0;
-  
-  #While loop syntax is like the if statement.
-  #Also note the use of boolean keyword "and" instead of Java's &&.
-  #This is mainly for typing efficiency and readability.
-  #The C/Java ++ operator is implemented.
-  #It's really annoying when languages don't let you do that...
-  while i < leftHalf.length and j < rightHalf.length {
-    if leftHalf[i] < rightHalf[j] {
-	  arr[k] = leftHalf[i];
-	  i++;
-	}
-	else {
-	  arr[k] = rightHalf[j];
-	  j++;
-	}
-	k++;
-  }
-  
-  while i < leftHalf.length {
-    arr[k] = leftHalf[i];
-	i++;
-    k++;
-  }
-  
-  while j < rightHalf.length {
-    arr[k] = rightHalf[j];
-	j++;
-	k++;
-  }
+Void xToFive(Int: x)
+START xToFive
+Int: x = 0
+x += 1
+for (x in x until 5) {
+  print(x)
 }
+END xToFive
 
-#Example 3: Maps and Nested Functions
-#Maps are used like Python's dict and Java's Map<K, V>.
-#They are based on Sets, which will also be an integral part of our language.
-#But the Map is implemented here for a less trivial example.
-Map<String, int> phonebook(){
-  #Functions can be nested as in Scala.
-  #These functions only exist within the scope of their parent function.
-  void addRandomNumber(Map<String, int> pb, String name){
-    #The random function and other math operations are included in the standard library.
-	#random() produces a pseudo-random number on the interval [0, 1).
-	#That is, 0-inclusive, but 1-exclusive.
-	#Another point: float casting.
-	#Because random() returns a float, it must be casted to a float.
-	#This can be done with the Java style casting syntax.
-    int randomNum = (int)(random()*1000000000);
-    
-	#Entries can be added to Maps simply with the below syntax.
-	#For Sets, one could say "s += elt".
-	#Membership in Sets can be tested as if accessing an element in an Array (i.e. s[elt] would return true)
-	pb[name] = randomNum;
-  }
-  #Java style instantiation syntax.
-  Map<String, int> myPB = new Map<String, int>();
-  addRandomNumber(myPB, "Alice");
-  addRandomNumber(myPB, "Bob");
-  addRandomNumber(myPB, "Charlie");
-  addRandomNumber(myPB, "Dan");
-  #In case it has not been stated earlier, return statements are required when a return type is specified.
-  #This is decidedly NOT the functional/evil Scala syntax where the function evaluates to the last returned value.
-  return myPB;
+Void intOperations(Int: x, Int: y, Int: z)
+START intOperations
+Int: x = 10 
+Int: y = 3 
+Int: z = 4
+if (x*y < (27 + z) and not False) {
+  Int: z = x * y
 }
+if (True) print(z){}
+END intOperations
 
-#Example 4: Breadth-First Search
-#Source: http://www-internal.eecs.usma.edu/courses/cs385/Handbook/dfsbfs.html
-#The algorithm was implemented as described here, but was translated into our language.
-#Writing the algorithm was not the intent behind this homework; this was discussed with the instructor.
-#For the sake of this example, a graph will be implemented as a map, where each vertex is a number, the key is the current vertex number, and the value is an an array of its neighboring/connected nodes.
-set bfs(Map<int, int[]> graph, int currVertex){
-	#Java style instantiation syntax of sets and queues.
-	Set(Int) visited = new Set();
-	Queue(Int) checkQueue = [currVertex];
-	#Like Python, boolean returns True as long as Collection type is not empty.
-	while checkQueue {
-		#Here note the use of the boolean keywords "not in" which is adopted from Python.
-		#This is mainly for typing effiency and readability.
-		#Note that pop() is understood as a method of class Queue.
-		int vertex = checkQueue.pop(0)
-		if vertex not in visited {
-			#Here, note that add and extend are methods of class Collection. 
-			visited.add(vertex)
-			#Adopts Python-esque ability to remove elements between and from collections using the "-" operand.
-			#Additionally, [key] is used to access a key and value pair in a Map.
-			queue.extend(graph[vertex] - visited)
-		}
-	}
-	return visited
+Float floatWhile(Float: x)
+START floatWhile
+Float: y = .1
+while (x <= 10.0) {
+  x += y
 }
+if (x == 10.0) {
+  print(x){}
+}
+else if (x > 10.0) {
+  print("x is greater than 10.0"){}
+}
+else print("x is less than 10.0 and the while loop does not work"){}
+return x
+END floatWhile
+

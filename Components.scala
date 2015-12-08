@@ -42,12 +42,14 @@ case object PrintTok extends Token
 case object ToTok extends Token 
 case object UntilTok extends Token
 case object InTok extends Token
+/*
 case object IntTok extends Token
 case object StringTok extends Token
 case object VoidTok extends Token
 case object CharTok extends Token
 case object DoubleTok extends Token
 case object BooleanTok extends Token
+*/
 case object BeginTok extends Token
 case object EndTok extends Token
 case object ArrayTok extends Token
@@ -85,8 +87,9 @@ case class Print(expr: Expr) extends Statement
 case class Reassign(variable: Name, expr: Expr) extends Statement
 case class For(name: String, expr:Expr, choice:Choice, expr2:Expr, l:List[Statement]) extends Statement
 case class While(expr: Expr, l:List[Statement]) extends Statement 
-case class If(exprIf:Expr, anyIf: List[Statement], exprElseIf:Option[Expr], anyElseIf:List[Statement], anyElse: List[Statement]) extends Statement
+case class If(exprIf:Expr, anyIf: List[Statement], exprElseIf:Option[List[Expr]], anyElseIf:List[List[Statement]], anyElse: List[Statement]) extends Statement
 case class Return(value: Option[Expr] = None) extends Statement
+case class DecVar(type: Name, name: Name, value: Expr)
 
 case class Type(Name: Name, params: Option[List[Type]] = None)
 case class Args(params: List[Expr])

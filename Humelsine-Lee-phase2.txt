@@ -18,8 +18,8 @@ Statements will be delimited by curly braces.
 1.2 - float literal for the float 1.2 *** (are these valid? 0.2, .2)
 "hello" - String literal
 'a' - char literal. Note that a char is a single character and thus '' cannot contain more than one symbol.
-true - boolean literal for true.
-false - boolean literal for false.
+True - boolean literal for true.
+False - boolean literal for false.
 [1, 2, 3] - Array literal
 
 -Symbols:
@@ -222,4 +222,3 @@ Part C: Unambiguous CFG
 <args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
-

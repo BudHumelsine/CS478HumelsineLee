@@ -163,8 +163,8 @@ class Interpreter {
       case If(exprIf, anyIf, exprElseIf, anyElseIf, anyElse) +: rest =>
         if (valToBool(eval(exprIf, env))) exec(anyIf, env)
         else if (exprElseIf.isDefined) {
-          var elifList = exprElseIf.toArray
-          var elifBody = anyElseIf.toArray
+          var elifList = exprElseIf.head.toArray
+          var elifBody = anyElseIf.head.toArray
           var flag = false
           var elseFlag = false
           while (!flag) {
@@ -174,28 +174,33 @@ class Interpreter {
               if (valToBool(toTest)) {
                 flag = true
                 elseFlag = true
-                exec(List(elifBody(elem)), env)
+                exec(elifBody(elem), env)
               }
             }
           }
-          if (elseFlag) exec(anyElse, env)
+          if (elseFlag && anyElse.size > 0) exec(anyElse, env)
           exec (rest, env)
         }
       case While(cond, body) +: rest =>
         while(valToBool(eval(cond, env))) exec(body, env)
         exec(rest, env)
       case For(n,e, c, e2, a) +: rest => 
+        var name = null
+        n match {
+          case Name(y) => name = y
+          case _ => throw new ConversionException("Missing a valid variable name")
+        }
         val start = valToInt(eval(e, env)) 
         val stop = valToInt(eval(e2, env))
         c match {
         case Until =>
           for (x <- start until stop)  {
-            val env3 = env + (n -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            val env3 = env + (name -> new Location(Type(Name("Integer")), Some(Integer(x))))
             exec(a, env3)
           }
         case To =>
           for (x <- start to stop)  {
-            val env3 = env + (n -> new Location(Type(Name("Integer")), Some(Integer(x))))
+            val env3 = env + (name -> new Location(Type(Name("Integer")), Some(Integer(x))))
             exec(a, env3)
           }
         }
