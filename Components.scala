@@ -27,6 +27,7 @@ case class Str(name: String) extends Token with Expr with Value
 case class Chr(name: Char) extends Token with Expr with Value 
 case class Bool(value: Boolean) extends Token with Expr with Value 
 case class Name(name: String) extends Token with Expr //catch names for things such as vars or functions
+case class Symbol(name:String) extends Token with Value
 
 case object AndTok extends Token
 case object OrTok extends Token
@@ -49,6 +50,7 @@ case object DoubleTok extends Token
 case object BooleanTok extends Token
 case object BeginTok extends Token
 case object EndTok extends Token
+case object ArrayTok extends Token
 
  
 //Statements

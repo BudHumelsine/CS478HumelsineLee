@@ -22,13 +22,6 @@ false - boolean literal for false.
 <= - boolean less than or equal to. Evaluates to either true or false.
 != - boolean not equal to. Evaluates to either true or false.
      It should be noted that this is just a shortcut for the boolean expression: not a==b.
-++ - increment by 1 and reassign. *** these aren't actually in the CFG yet
--- - decrement by 1 and reassign.
-     NOTE: the ++ and -- operators, if used, must ONLY be used on a line by themselves.
-	 That is, x++; is a valid statement, but x=y++; is invalid.
-	 Also note that this is equivalent to +=1 and -=1, respectively.
-	 Finally, only postfix notation is supported (x++ is valid, but not ++x).
-	 This is the only valid use for the ++ and -- operators.
 += - increment by the specified value and reassign.
 -= - decrement by the specified value and reassign.
      These operators, like the ++ and -- operators, can only be used on a line by themselves.
@@ -164,7 +157,10 @@ Context Free Grammar
 
 Variables are declared with the type, a colon, and the value
 Int: x = 5
-Bool: flag = true
+Bool: flag = True
+reassignment is simply the variable names followed by the new value
+x = 6
+flag = False
 
 Functions are declared in a similar fashion with return type, followed by the name, parameters in parenthesis, a begin statement and an end statement
 Bool function(Bool: paramater1, Int: parameter2) BEGIN function
@@ -218,9 +214,9 @@ else {
 }
 
 PRINT
-a print statement is instantiated with the word print
-print("x")
-print(y)
+a print statement is instantiated with the word print followed by curly braces (all statements are followed by curly braces)
+print("x"){}
+print(y){}
 
 RETURN
 a return statement returns the value following the keyword, and ending a function early

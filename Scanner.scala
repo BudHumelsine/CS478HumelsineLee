@@ -123,7 +123,8 @@ class Scanner {
       else if(word == "Boolean") IntTok +: scan(i)
       else if(word == "BEGIN") BeginTok +: scan(i)
       else if(word == "END") EndTok +: scan(i)
-      else Name(word) +: scan(i)
+      else if(word == "Array") ArrayTok +: scan(i)
+      else Symbol(word) +: scan(i)
     }
     
     scan(0)

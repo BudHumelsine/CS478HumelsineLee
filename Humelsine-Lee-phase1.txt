@@ -26,8 +26,7 @@
 
 #Example 1: Binary Search
 #Source: http://interactivepython.org/runestone/static/pythonds/SortSearch/TheBinarySearch.html
-#The algorithm was implemented as described here, but was translated into our language.
-#Writing the algorithm was not the intent behind this homework; this was discussed with the instructor.
+
 
 [return type] [name]([Type1: arg1], [Type2: arg2], etc.) START [name] [body] END [name]
 #Here, we require an Array and an object of type Ordered.

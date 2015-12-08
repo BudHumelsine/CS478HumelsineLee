@@ -32,13 +32,6 @@ false - boolean literal for false.
 <= - boolean less than or equal to. Evaluates to either true or false.
 != - boolean not equal to. Evaluates to either true or false.
      It should be noted that this is just a shortcut for the boolean expression: not a==b.
-++ - increment by 1 and reassign. *** these aren't actually in the CFG yet
--- - decrement by 1 and reassign.
-     NOTE: the ++ and -- operators, if used, must ONLY be used on a line by themselves.
-	 That is, x++; is a valid statement, but x=y++; is invalid.
-	 Also note that this is equivalent to +=1 and -=1, respectively.
-	 Finally, only postfix notation is supported (x++ is valid, but not ++x).
-	 This is the only valid use for the ++ and -- operators.
 += - increment by the specified value and reassign.
 -= - decrement by the specified value and reassign.
      These operators, like the ++ and -- operators, can only be used on a line by themselves.
