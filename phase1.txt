@@ -32,28 +32,28 @@ All variable declarations are accompanied by capitalized [Type] followed by a co
 #The following are examples of functions, declarations, and programs in our language.
 
 Void xToFive(Int: x)
-START xToFive
+BEGIN xToFive
 Int: x = 0
 x += 1
-for (x in x until 5) {
+for (y in x until 5) {
   print(x){}
 }
 END xToFive
 
 
 Void intOperations(Int: x, Int: y, Int: z)
-START intOperations
+BEGIN intOperations
 Int: x = 10 
 Int: y = 3 
 Int: z = 4
-if (x*y < (27 + z) and not False) {
+if (x*y < (27 + z) and true) {
   Int: z = x * y
 }
 if (True) {print(z){}}
 END intOperations
 
 Float floatWhile(Float: x)
-START floatWhile
+BEGIN floatWhile
 Float: y = .1
 while (x <= 10.0) {
   x += y

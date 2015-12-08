@@ -99,8 +99,8 @@ class Parser {
       rest4 = rest4.tail
       if(rest4.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
       val (body, rest5) = parseBlockStatements(rest4.tail)
-      if(rest5.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
-      (For(name, cond, choice, cond2, body), rest5.tail)
+      //if(rest5.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+      (For(name, cond, choice, cond2, body), rest5)
     }
     
     def parseIf(toks: List[Token]): (If, List[Token]) = {
@@ -117,8 +117,8 @@ class Parser {
       if (rest.headOption != Some(LCurly)) throw new StatementParseException("{ expected")
       val (ifBody, rest2) = parseBlockStatements(rest.tail)
       anyIf = ifBody
-      if (rest2.headOption != Some(RCurly)) throw new StatementParseException("} expected")
-      rest2.tail match {
+      //if (rest2.headOption != Some(RCurly)) throw new StatementParseException("} expected")
+      rest2 match {
         case ElseTok +: IfTok +: LParen +: rest3 =>
           var toksLeft = rest3
           while (toksLeft.size > 0) {
@@ -134,7 +134,7 @@ class Parser {
               case RCurly +: ElseTok +: LCurly +: rest9 => 
                 val (elseBody, rest6) = parseBlockStatements(rest9.tail)
                 anyElse = elseBody
-                if (rest6.headOption != Some(RCurly)) throw new StatementParseException("( expected")
+                //if (rest6.headOption != Some(RCurly)) throw new StatementParseException("} expected")
                 return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest6)
               case RCurly +: rest9 => return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest9)
               case _ => throw new StatementParseException("Missing }")
@@ -143,8 +143,8 @@ class Parser {
         case ElseTok +: LCurly +: rest2 => 
           val (elseBody, rest3) = parseBlockStatements(rest2)
           anyElse = elseBody
-          if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
-          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3.tail)
+          //if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3)
         case _ =>
           return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2.tail)
       }
@@ -158,8 +158,8 @@ class Parser {
       var rest2 = rest.tail
       if(rest2.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
       val (stmt, rest3) = parseBlockStatements(rest2.tail)
-      if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
-      (While(cond, stmt), rest3.tail)
+      //if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
+      (While(cond, stmt), rest3)
     }
     
     def parseReturn(toks: List[Token]): (Statement, List[Token]) = {
@@ -177,6 +177,7 @@ class Parser {
         val (args, rest2) = parseArgs(rest)
         (FunctCall(Name(s1), args), rest2)
         }
+      case Symbol(s1) +: rest => (Name(s1), rest)
       case _ => throw new StatementParseException("Invalid symbol: "+toks.head)
     }
     
@@ -210,13 +211,13 @@ class Parser {
           case _ => throw new StatementParseException(") expected.")
         }
       }
-      case _ => throw new StatementParseException("Invalid symbol: " + toks.head)
+      case _ => //throw new StatementParseException("Invalid symbol: " + toks.head)
     }
 
     def parseExpr2(toks: List[Token]): (Expr, List[Token]) = {
       if(toks.headOption == Some(NotTok)) {
-      val (e, toks2) = parseExpr2(toks.tail)
-      (Not(e), toks2)
+        val (e, toks2) = parseExpr2(toks.tail)
+        (Not(e), toks2)
       }
       else {
         var (left, toks2) = parseExpr1(toks)
@@ -311,8 +312,8 @@ class Parser {
 
     def parseTypedArgs(toks: List[Token]): (TypedArgs, List[Token]) = toks match{
       case RParen +: rest => (TypedArgs(List.empty[(Type, Name)]), rest)
-      case Symbol(s1) +: Symbol(s2) +: RParen +: rest => (TypedArgs((Type(Name(s1)), Name(s2)) +: List.empty[(Type, Name)]), rest)
-      case Symbol(s1) +: Symbol(s2) +: Comma +: Symbol(s3) +: rest => { 
+      case Symbol(s1) +: Colon +: Symbol(s2) +: RParen +: rest => (TypedArgs((Type(Name(s1)), Name(s2)) +: List.empty[(Type, Name)]), rest)
+      case Symbol(s1) +: Colon +: Symbol(s2) +: Comma +: Symbol(s3) +: rest => { 
         val (args, rest2) = parseTypedArgs(Symbol(s3) +: rest)
         (TypedArgs((Type(Name(s1)), Name(s2)) +: args.params), rest2)
       }
@@ -328,6 +329,16 @@ class Parser {
       }
     }
     
+    def parseFunctionStatements(toks: List[Token]): (List[Statement], List[Token]) = toks match{
+      case EndTok +: rest => (List.empty[Statement], rest)
+      case _ => {
+        val (s, rest) = parseStatement(toks)
+        val (block, rest2) = parseFunctionStatements(rest)
+        (s +: block, rest2)
+      }
+    }
+
+
     def parseDec(toks: List[Token]): (Dec, List[Token]) = {
 
       var name = ""
@@ -343,9 +354,9 @@ class Parser {
               if(x != name) throw new StatementParseException("Incorrect function declaration, begin not calling function name")
               else rest2 = rest2.tail
           }
-          var (body, rest3) = parseBlockStatements(rest2)
-          if(rest3.headOption != Some(EndTok)) throw new StatementParseException("END expected.")
-          rest3 = rest3.tail
+          var (body, rest3) = parseFunctionStatements(rest2)
+          //if(rest3.headOption != Some(EndTok)) throw new StatementParseException("END expected.")
+          //rest3 = rest3.tail
           rest3 match {
             case Symbol(x) +: rest9 => 
               if(x != name) throw new StatementParseException("Incorrect function declaration, end not calling function name")

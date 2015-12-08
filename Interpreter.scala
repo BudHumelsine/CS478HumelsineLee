@@ -244,7 +244,7 @@ class Interpreter {
           case Name(x) => 
             //Call-by-reference
             newEnv += (funct.args.params(i)._2.name -> env(x)) 
-            /*
+          
           case _ =>
             //Call-by-value
             val v = eval(expr, env)
