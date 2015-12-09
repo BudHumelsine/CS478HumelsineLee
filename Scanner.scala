@@ -114,13 +114,7 @@ class Scanner {
       else if(word == "to") ToTok +: scan(i)
       else if(word == "until") UntilTok +: scan(i)
       else if(word == "in") InTok +: scan(i)
-      /*
-      else if(word == "Int") IntTok +: scan(i)
-      else if(word == "Void") VoidTok +: scan(i)
-      else if(word == "Char") CharTok +: scan(i)
-      else if(word == "Double") DoubleTok +: scan(i)
-      else if(word == "Boolean") IntTok +: scan(i)
-      */
+      else if(word == "field") FieldTok +: scan(i)
       else if(word == "BEGIN") BeginTok +: scan(i)
       else if(word == "END") EndTok +: scan(i)
       else if(word == "Array") ArrayTok +: scan(i)

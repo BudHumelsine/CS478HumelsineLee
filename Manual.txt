@@ -124,7 +124,8 @@ Context Free Grammar
 
 <dec> = 
    | <funct>
-   | <type> ":" <ident> "=" <expr>
+   | <varDec>
+   | "field" <ident> "=" "{" (varDec)* "}"
   
 <stmt> = 
    | "for" "(" <ident> "in" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
@@ -146,7 +147,7 @@ Context Free Grammar
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
 <Array> = "Array(" <int>* ")"
-
+<varsDec> = <type> ":" <ident> "=" <expr>
 
 *****Examples********
 
@@ -224,3 +225,26 @@ return "This is a return statement"
 Arrays can be created like such (Note they only support integers):
 Array(1,2,3)
 Array()
+
+Fields are similar to classes, but they do not include functions.
+The format of a field is
+
+field NAME = {
+	Int: attribute1 = 0
+	String: attribute2 = "This is another attribute"
+}
+
+These fields could be used to implement linked links in such a manner
+field link3 = {
+	Int: head = 7
+	Void: tail = Void
+}
+field link2 = {
+	Int: head = 6
+	Int: tail = link3.head
+}
+field link1 = {
+	Int: head = 5
+	Int: tail = link2.head
+}
+

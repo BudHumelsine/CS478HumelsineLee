@@ -25,7 +25,7 @@ class Interpreter {
       case Str(s) => Str(s)
       case Chr(c) => Chr(c)
       case Bool(b) => Bool(b)
-      case Array(arr) =>
+      case MyArray(arr) =>
         val buf = arr.to[scala.collection.mutable.ArrayBuffer].map(e => eval(e, env))
         Arr(buf)
       case Name(name) =>
@@ -140,6 +140,13 @@ class Interpreter {
         //place this function in its own environment to allow recursion.
         funct.staticEnv = newEnv
         newEnv
+      case DecField(n, list) =>
+        var env2 = env
+        for (elem <- list) {
+          val v = eval (elem.value.get, env2)
+          env2 = env2 + (n.name + "." + elem.i.name -> new Location(elem.t, Some(v)))
+        }
+        env2
     }
     
     def reassign(re: Reassign, env: Env): Env = {
@@ -208,6 +215,8 @@ class Interpreter {
       case (e: Expr) +: rest =>
         eval(e, env)
         exec(rest, env)
+      case DecField(name, l) +: rest =>
+        exec(rest, declare(DecField(name,l), env))
       case DecVar(t, name, value) +: rest =>
         exec(rest, declare(DecVar(t, name, value), env))
       case DecFunct(t, name, args, body) +: rest =>

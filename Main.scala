@@ -7,6 +7,7 @@ import scala.io.Source
 // >>>scalac *.scala
 // >>>scala lang.Main
 
+
 object Main {  
   def main(args: Array[String]){  
     runProgram("phase1.txt")

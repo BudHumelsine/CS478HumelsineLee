@@ -196,7 +196,8 @@ Part C: Unambiguous CFG
 
 <dec> = 
    | <funct>
-   | <type> ":" <ident> "=" <expr>
+   | <varDec>
+   | "field" <ident> "=" "{" (varDec)* "}"
   
 <stmt> = 
    | "for" "(" <ident> "in" <expr> ("to" | "until") <expr> ")" "{" <any> "}"
@@ -218,3 +219,4 @@ Part C: Unambiguous CFG
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
 <Array> = "Array(" <int>* ")"
+<varsDec> = <type> ":" <ident> "=" <expr>

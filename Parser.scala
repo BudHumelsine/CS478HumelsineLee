@@ -181,13 +181,32 @@ class Parser {
       case _ => throw new StatementParseException("Invalid symbol: "+toks.head)
     }
     
-    def parseArray(toks: List[Token]): (Array, List[Token]) = {
-      var arr:Array[Int]=Array()
+    def parseArray(toks: List[Token]): (MyArray, List[Token]) = {
+      var arr:Array[Integer]= Array()
       toks match{
-        case Integer(x) +: RParen +: rest => (Array(arr += x), rest)
-        case Integer(x) +: Comma +: rest => arr += x
-        case RParen +: rest => (Array(Array:Int()), rest)
-        case _ => throw new StatementParseException("Unknown token in array: " toks.head)
+        case Integer(x) +: RParen +: rest => (MyArray(arr :+ Integer(x)), rest)
+        case Integer(x) +: Comma +: rest => {
+          arr :+ Integer(x)
+          var flag = true
+          var rest2 = rest
+          while (flag) {
+            rest2 match {
+              case Integer(x) +: Comma +: rest3 => {
+                arr :+ Integer(x)
+                rest2 = rest3
+              }
+              case Integer(x) +: RParen +: rest3 => {
+                arr :+ Integer(x)
+                rest2 = rest3
+                flag = !flag
+              }
+              case _ => throw new InvalidExpressionException("Array not created correctly")
+            }
+          }
+          (MyArray(arr), rest2)
+        }
+        case RParen +: rest => (MyArray(arr), rest)
+        case _ => throw new StatementParseException("Unknown token in array: " +toks.head)
       }
     }
     
@@ -210,7 +229,7 @@ class Parser {
           case _ => throw new StatementParseException(") expected.")
         }
       }
-      case _ => //throw new StatementParseException("Invalid symbol: " + toks.head)
+      case _ => throw new StatementParseException("Invalid symbol: " + toks.head)
     }
 
     def parseExpr2(toks: List[Token]): (Expr, List[Token]) = {
@@ -354,8 +373,6 @@ class Parser {
               else rest2 = rest2.tail
           }
           var (body, rest3) = parseFunctionStatements(rest2)
-          //if(rest3.headOption != Some(EndTok)) throw new StatementParseException("END expected.")
-          //rest3 = rest3.tail
           rest3 match {
             case Symbol(x) +: rest9 => 
               if(x != name) throw new StatementParseException("Incorrect function declaration, end not calling function name")
@@ -366,6 +383,27 @@ class Parser {
         case Symbol(s1) +: Colon +: Symbol(s2) +: Equals +: rest => {
           val (value, rest2) = parseExpr(rest)
           (DecVar(Type(Name(s1)), Name(s2), Some(value)), rest2)
+        }
+        case FieldTok +: Symbol(s1) +: Equals +: LCurly +: rest => {
+          var flag = true
+          var tokensLeft = rest
+          var l:List[DecVar] = List.empty
+          while(flag) {
+            tokensLeft match {
+              case Symbol(s1) +: Colon +: Symbol(s2) +: Equals +: rest => {
+                val (value, rest2) = parseExpr(rest)
+                val variable = DecVar(Type(Name(s1)), Name(s2), Some(value))
+                tokensLeft = rest2
+                l = variable +: l
+              }
+              case RCurly +: rest2 => {
+                tokensLeft = rest2
+                flag = !flag
+              }
+              case _ => throw new MalformedDeclarationException("variable declared wrong")
+            }
+          }
+          (DecField(Name(s1), l.reverse), tokensLeft)
         }
         //case Symbol(s1) +: Symbol(s2) +: rest => (DecVar(Type(Name(s1)), Name(s2), None), rest)
         case _ => throw MalformedDeclarationException("Improper declaration syntax.")

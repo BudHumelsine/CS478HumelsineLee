@@ -21,6 +21,7 @@ case object Ast extends Token
 case object Exclamation extends Token
 case object Equals extends Token
 case object Colon extends Token
+case object FieldTok extends Token
 case class Integer(value: Int) extends Token with Expr with Value 
 case class Flt(value: Float) extends Token with Expr with Value
 case class Str(name: String) extends Token with Expr with Value 
@@ -58,15 +59,13 @@ case object ArrayTok extends Token
 //Statements
 sealed trait Expr extends Statement
 case class ArrExpr(contents: List[Expr]) extends Expr
-//case class Name(name: String) extends Expr
-//case class Pow(base: Expr, exp: Expr) extends Expr
 case class Mult(left: Expr, right: Expr) extends Expr
 case class Div(left: Expr, right: Expr) extends Expr
 case class Mod(left: Expr, right: Expr) extends Expr
 case class Add(left: Expr, right: Expr) extends Expr
 case class Sub(left: Expr, right: Expr) extends Expr
 case class Not(expr: Expr) extends Expr
-case class Array(arr:Array[Integer]) entends Expr
+case class MyArray(arr:Array[Integer]) extends Expr
 case class IsEqual(left: Expr, right: Expr) extends Expr
 case class NotEqual(left: Expr, right: Expr) extends Expr
 case class LessThanEqual(left: Expr, right: Expr) extends Expr
@@ -76,11 +75,11 @@ case class GreaterThan(left: Expr, right: Expr) extends Expr
 case class And(left: Expr, right: Expr) extends Expr
 case class Or(left: Expr, right: Expr) extends Expr
 case class FunctCall(name: Name, args: Args) extends Expr
-//case class Field(child: Option[Expr], name: Name) extends Expr
 
 sealed trait Dec extends Statement
 case class DecVar(t: Type, i: Name, value: Option[Expr] = None) extends Dec
 case class DecFunct(t: Type, i: Name, args: TypedArgs, body: List[Statement]) extends Dec
+case class DecField(n:Name, vals:List[DecVar]) extends Dec
   
 sealed trait Statement
 case class Print(expr: Expr) extends Statement
