@@ -171,6 +171,7 @@ Part C: Unambiguous CFG
 	| <bool>
 	| <str>
 	| <chr>
+	| <Array>
 	| '(' <expr> ')'
 	|<expr>
 
@@ -216,3 +217,4 @@ Part C: Unambiguous CFG
 <args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
+<Array> = "Array(" <int>* ")"

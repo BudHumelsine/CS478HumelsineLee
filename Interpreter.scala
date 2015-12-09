@@ -25,8 +25,8 @@ class Interpreter {
       case Str(s) => Str(s)
       case Chr(c) => Chr(c)
       case Bool(b) => Bool(b)
-      case ArrExpr(list) =>
-        val buf = list.to[scala.collection.mutable.ArrayBuffer].map(e => eval(e, env))
+      case Array(arr) =>
+        val buf = arr.to[scala.collection.mutable.ArrayBuffer].map(e => eval(e, env))
         Arr(buf)
       case Name(name) =>
         val prev = env.get(name)

@@ -66,6 +66,7 @@ case class Mod(left: Expr, right: Expr) extends Expr
 case class Add(left: Expr, right: Expr) extends Expr
 case class Sub(left: Expr, right: Expr) extends Expr
 case class Not(expr: Expr) extends Expr
+case class Array(arr:Array[Integer]) entends Expr
 case class IsEqual(left: Expr, right: Expr) extends Expr
 case class NotEqual(left: Expr, right: Expr) extends Expr
 case class LessThanEqual(left: Expr, right: Expr) extends Expr

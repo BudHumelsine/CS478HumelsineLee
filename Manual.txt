@@ -99,6 +99,7 @@ Context Free Grammar
 	| <bool>
 	| <str>
 	| <chr>
+	| <Array>
 	| '(' <expr> ')'
 	|<expr>
 
@@ -144,6 +145,7 @@ Context Free Grammar
 <args> = "(" (<type> ":" <ident>) (, <type> ":" <ident>)* ")" | "()"
 <funct> = <type> <ident> "(" <args> ")" "BEGIN" <ident> Anything "END" <indent>
         | <ident> "." <funct>
+<Array> = "Array(" <int>* ")"
 
 
 *****Examples********
@@ -169,6 +171,7 @@ END function
 Loops:
 FOR
 A for loop is instantiated with the "for" keyword, followed by the variable, and one integer to or until another integer
+Note: Loops cannot be nested
 for (x in 1 until 5){
 	...foo...
 }
@@ -217,3 +220,7 @@ RETURN
 a return statement returns the value following the keyword, and ending a function early
 return x
 return "This is a return statement"
+
+Arrays can be created like such (Note they only support integers):
+Array(1,2,3)
+Array()

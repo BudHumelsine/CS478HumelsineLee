@@ -181,17 +181,13 @@ class Parser {
       case _ => throw new StatementParseException("Invalid symbol: "+toks.head)
     }
     
-    def parseArray(toks: List[Token]): (ArrExpr, List[Token]) = toks match{
-      case RBrack +: rest => (ArrExpr(List.empty), rest)
-      case _ => {
-        val (arg, rest) = parseExpr(toks)
-        rest match{
-          case RBrack +: rest => (ArrExpr(List(arg)), rest)
-          case Comma +: rest => {
-            val (arr, rest2) = parseArray(rest)
-            (ArrExpr(arg +: arr.contents), rest2)
-          }
-        }
+    def parseArray(toks: List[Token]): (Array, List[Token]) = {
+      var arr:Array[Int]=Array()
+      toks match{
+        case Integer(x) +: RParen +: rest => (Array(arr += x), rest)
+        case Integer(x) +: Comma +: rest => arr += x
+        case RParen +: rest => (Array(Array:Int()), rest)
+        case _ => throw new StatementParseException("Unknown token in array: " toks.head)
       }
     }
     
@@ -201,6 +197,9 @@ class Parser {
       case Str(n) +: rest => (Str(n), rest)
       case Chr(n) +: rest => (Chr(n), rest)
       case Bool(v) +: rest => (Bool(v), rest)
+      case ArrayTok +: rest =>
+        if(rest.headOption != Some(LParen)) throw new StatementParseException("( expected.")
+        else parseArray(rest.tail)
       case Minus +: Integer(v) +: rest => (Integer(-1*v), rest)
       case Minus +: Flt(v) +: rest => (Flt(-1*v), rest)
       case Symbol(n) +: rest => parseExprSymbol(toks)
