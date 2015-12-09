@@ -268,6 +268,7 @@ class Interpreter {
       if(!returnVal.isEmpty){
         val ret = returnVal.get
         returnVal = None
+        println(ret)
         ret
       }
       else null
