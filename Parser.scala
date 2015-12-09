@@ -35,6 +35,7 @@ class Parser {
       case IfTok +: rest => parseIf(rest)
       case WhileTok +: rest => parseWhile(rest)
       case ReturnTok +: rest => parseReturn(rest)
+      case FieldTok +: rest => parseDec(FieldTok +: rest)
       case PrintTok +: LParen +: rest =>
         val (expr, rest2) = parseExpr(rest)
         if(rest2.headOption != Some(RParen)) throw new StatementParseException(") expected.")

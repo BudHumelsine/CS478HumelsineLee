@@ -81,3 +81,25 @@ while(True) {
 }
 END test
 
+Void arrayTest()
+BEGIN arrayTest
+array: arr = Array(1,2,3)
+END arrayTest
+
+
+Void recordCheck()
+BEGIN recordCheck
+field link3 = {
+  Int: head = 7
+  Void: tail = Void
+}
+field link2 = {
+  Int: head = 6
+  Int: tail = link3.head
+}
+field link1 = {
+  Int: head = 5
+  Int: tail = link2.head
+}
+print(link1.head){}
+END recordCheck

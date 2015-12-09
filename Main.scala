@@ -10,7 +10,7 @@ import scala.io.Source
 
 object Main {  
   def main(args: Array[String]){  
-    runProgram("phase1.txt")
+    runProgram("tests/phase1.txt")
     //new Interpreter().runTests
   }
 
