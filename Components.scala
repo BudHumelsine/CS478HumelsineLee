@@ -2,6 +2,14 @@ package lang
 
 
 //Tokens
+
+/*
+Kosta, Leonard. CDT F4.  Assistance Given to the Author, electronic copying.  This code for the project was based off the original work done in the official group for this project between CDT Kosta and CDT Lee.
+While our code was based on the code from CDTs Lee and Kosta's group, the language for our group is different, and thus major changes were made. 
+West Point, NY 9 DEC 15.
+*/
+
+
 sealed trait Token
 case object LParen extends Token // (
 case object RParen extends Token // )
