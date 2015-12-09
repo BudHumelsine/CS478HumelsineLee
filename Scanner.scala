@@ -93,7 +93,7 @@ class Scanner {
     def scanLettersAndNumbers(index: Int): List[Token] = {
       var i = index
       var word = ""
-      while(i < text.length && (text(i).isLetterOrDigit || text(i) == '_')){
+      while(i < text.length && (text(i).isLetterOrDigit || text(i) == '_' || text(i) == '.')) { //dot is allowed with the implementation of field
         word += text(i)
         i += 1
       }
@@ -104,10 +104,7 @@ class Scanner {
       else if(word == "not") NotTok +: scan(i)
       else if(word == "for") ForTok +: scan(i)
       else if(word == "if") IfTok +: scan(i)
-      else if(word == "else") {
-        if (i + 1 < text.length - 3 && text(i).isWhitespace && text(i+1)== 'i' && text(i+2) == 'f') ElseIfTok +: scan(i+3)
-        else ElseTok +: scan(i) 
-      }
+      else if(word == "else") ElseTok +: scan(i) 
       else if(word == "while") WhileTok +: scan(i)
       else if(word == "return") ReturnTok +: scan(i)
       else if(word == "print") PrintTok +: scan(i)

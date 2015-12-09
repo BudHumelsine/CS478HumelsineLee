@@ -17,9 +17,9 @@ object Main {
   def runProgram(filename: String){
     val text = getTextFromFile(filename)
     val tokens = scan(text)
-    println(tokens)
+    //println(tokens) //debug only
     val parsed = parse(tokens)
-    println(parsed)
+    println(parsed) //debug only
     val interpreted = interpret(parsed)
     //println(interpreted)
   }

@@ -13,7 +13,7 @@ class Parser {
         statements += nextStatement
         remaining = rem
       }
-      statements.toList //doesnt this have to be reversed?
+      statements.toList 
     }
     
     
@@ -109,7 +109,7 @@ class Parser {
       var exprElseIf:List[Expr] = List() 
       var anyElseIf:List[List[Statement]] = List()
       var anyElse:List[Statement] = List()     
-      if (toks.headOption != Some(LParen)) throw new StatementParseException("( expected")
+      //if (toks.headOption != Some(LParen)) throw new StatementParseException("( expected")
       var (cond, rest) = parseExpr(toks.tail)
       exprIf = cond
       if (rest.headOption != Some(RParen)) throw new StatementParseException(") expected")
@@ -119,25 +119,24 @@ class Parser {
       anyIf = ifBody
       //if (rest2.headOption != Some(RCurly)) throw new StatementParseException("} expected")
       rest2 match {
-        case ElseTok +: IfTok +: LParen +: rest3 =>
+        case ElseTok +: IfTok +: rest3 =>
           var toksLeft = rest3
           while (toksLeft.size > 0) {
             var (cond2, rest4) = parseExpr(toksLeft)
             exprElseIf = cond2 +: exprElseIf
-            if (rest4.headOption != Some(RParen)) throw new StatementParseException("( expected")
-            rest4 = rest4.tail
             if (rest4.headOption != Some(LCurly)) throw new StatementParseException("{ expected")
             var (elseIfBody, rest5) = parseBlockStatements(rest4.tail)
             anyElseIf = elseIfBody +: anyElseIf
+            
             rest5 match {
-              case RCurly +: ElseTok +: IfTok +: LParen +: rest9 => toksLeft = rest9
-              case RCurly +: ElseTok +: LCurly +: rest9 => 
-                val (elseBody, rest6) = parseBlockStatements(rest9.tail)
+              case ElseTok +: IfTok +: LParen +: rest9 => toksLeft = rest9
+              case ElseTok +: LCurly +: rest9 => {
+                val (elseBody, rest6) = parseBlockStatements(rest9)
                 anyElse = elseBody
                 //if (rest6.headOption != Some(RCurly)) throw new StatementParseException("} expected")
                 return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest6)
-              case RCurly +: rest9 => return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest9)
-              case _ => throw new StatementParseException("Missing }")
+              }
+              case _ => return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest5)
             }
           }
         case ElseTok +: LCurly +: rest2 => 
@@ -146,7 +145,7 @@ class Parser {
           //if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
           return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3)
         case _ =>
-          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2.tail)
+          return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2)
       }
       (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2)
     }

@@ -14,6 +14,7 @@ Block comments are instantiated by #* and end with *#
 Curly braces are required to denote the start and end of statements.
 All variable declarations are accompanied by capitalized [Type] followed by a colon, i.e. Int: x = 5.
 *#
+
   #There will only be one print function: print.
   #Finally, statements will be delimited with a curly braces.
   print("Hello, world!"){}
@@ -40,17 +41,19 @@ for (y in x until 5) {
 }
 END xToFive
 
-
-Void intOperations(Int: x, Int: y, Int: z)
+Void intOperations()
 BEGIN intOperations
 Int: x = 10 
 Int: y = 3 
 Int: z = 4
-if (x*y < (27 + z) and true) {
+if (x*y < 27) {
   Int: z = x * y
 }
-if (True) {print(z){}}
+if (True) {
+  print(z){}
+}
 END intOperations
+
 
 Float floatWhile(Float: x)
 BEGIN floatWhile
@@ -64,7 +67,17 @@ if (x == 10.0) {
 else if (x > 10.0) {
   print("x is greater than 10.0"){}
 }
-else {print("x is less than 10.0 and the while loop does not work"){}}
+else {
+  print("x is less than 10.0 and the while loop does not work"){}
+}
 return x
 END floatWhile
+
+
+Void test()
+BEGIN test
+while(True) {
+  print("Hello"){}
+}
+END test
 
