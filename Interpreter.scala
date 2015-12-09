@@ -11,8 +11,6 @@ class Interpreter {
     var returnVal = None: Option[Value]
     
     def arrayMult(arr: Arr, n: Int): Arr = {
-      //Copies this array n times.
-      //Returns a new Arr.
       if(n < 0) throw new InvalidExpressionException("Cannot multiply Array by negative integer.")
       else if(n == 0) Arr(ArrayBuffer.empty)
       else if(n == 1) Arr(arr.buf)
@@ -42,7 +40,6 @@ class Interpreter {
         (ex, ey) match{
           case (Arr(b1), Integer(v)) => arrayMult(Arr(b1), v)
           case (Integer(v), Arr(b1)) => arrayMult(Arr(b1), v)
-          //If both are Integers, keep as Integer. Otherwise convert to Flt.
           case (Integer(n1), Integer(n2)) => Integer(valToInt(ex) * valToInt(ey))
           case (Flt(n1), Integer(n2)) => Flt(valToFloat(ex) * valToFloat(ey))
           case (Integer(n1), Flt(n2)) => Flt(valToFloat(ex) * valToFloat(ey))
@@ -52,7 +49,6 @@ class Interpreter {
       case Div(x, y) =>
         val ex = eval(x, env)
         val ey = eval(y, env)
-        //If both are Integers, keep as Integer. Otherwise convert to Flt.
         if(ex.isInstanceOf[Integer] && ey.isInstanceOf[Integer]) Integer(valToInt(ex) / valToInt(ey))
         else Flt(valToFloat(ex) / valToFloat(ey))
       case DivTrunc(x, y) =>

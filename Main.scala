@@ -11,7 +11,6 @@ import scala.io.Source
 object Main {  
   def main(args: Array[String]){  
     runProgram("tests/phase1.txt")
-    //new Interpreter().runTests
   }
 
   def runProgram(filename: String){

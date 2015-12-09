@@ -1,6 +1,0 @@
-Scanner: Works
-Parser: Works
-Interpreter: Works with minor bugs
-Arrays: Implemented, works
-records types (fields): works
-type checker: 

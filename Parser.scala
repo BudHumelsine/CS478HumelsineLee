@@ -110,7 +110,6 @@ class Parser {
       var exprElseIf:List[Expr] = List() 
       var anyElseIf:List[List[Statement]] = List()
       var anyElse:List[Statement] = List()     
-      //if (toks.headOption != Some(LParen)) throw new StatementParseException("( expected")
       var (cond, rest) = parseExpr(toks.tail)
       exprIf = cond
       if (rest.headOption != Some(RParen)) throw new StatementParseException(") expected")
@@ -118,7 +117,6 @@ class Parser {
       if (rest.headOption != Some(LCurly)) throw new StatementParseException("{ expected")
       val (ifBody, rest2) = parseBlockStatements(rest.tail)
       anyIf = ifBody
-      //if (rest2.headOption != Some(RCurly)) throw new StatementParseException("} expected")
       rest2 match {
         case ElseTok +: IfTok +: rest3 =>
           var toksLeft = rest3
@@ -134,7 +132,6 @@ class Parser {
               case ElseTok +: LCurly +: rest9 => {
                 val (elseBody, rest6) = parseBlockStatements(rest9)
                 anyElse = elseBody
-                //if (rest6.headOption != Some(RCurly)) throw new StatementParseException("} expected")
                 return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest6)
               }
               case _ => return (If(exprIf, anyIf, Some(exprElseIf.reverse), anyElseIf.reverse, anyElse), rest5)
@@ -143,7 +140,6 @@ class Parser {
         case ElseTok +: LCurly +: rest2 => 
           val (elseBody, rest3) = parseBlockStatements(rest2)
           anyElse = elseBody
-          //if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
           return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest3)
         case _ =>
           return (If(exprIf, anyIf, None, anyElseIf, anyElse), rest2)
@@ -158,7 +154,6 @@ class Parser {
       var rest2 = rest.tail
       if(rest2.headOption != Some(LCurly)) throw new StatementParseException("{ expected.")
       val (stmt, rest3) = parseBlockStatements(rest2.tail)
-      //if(rest3.headOption != Some(RCurly)) throw new StatementParseException("} expected.")
       (While(cond, stmt), rest3)
     }
     
@@ -313,8 +308,6 @@ class Parser {
     }
     
     def parseArgs(toks: List[Token]): (Args, List[Token]) = toks match{
-      //Parses a series of arguments until it hits an RParen token.
-      //Returns the compiled Args and the unconsumed tokens.
       case RParen +: rest => (Args(List.empty[Expr]), rest)
       case _ => {
         val (arg, rest) = parseExpr(toks)
