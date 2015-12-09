@@ -101,6 +101,7 @@ case object Until extends Choice
 
 
 //Custom Exceptions
+//The following custom exceptions are directly copied from the suite of custom exceptions for Lee-Kosta's exisiting project.
 case class MalformedDeclarationException(msg: String) extends Exception(msg)
 case class StringScanException(msg: String) extends Exception(msg)
 case class CharScanException(msg: String) extends Exception(msg)

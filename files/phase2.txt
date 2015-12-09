@@ -102,12 +102,11 @@ Regular Expressions for Variable Tokens:
 -Valid Identifiers: [a-zA-z][a-zA-Z0-9_]*
 -Int Literals: -?[1-9][0-9]* *** doesn't include 0
 -Float Literals: -?[0-9]*"."[0-9]+ 
--String Literals: \".*\" #Here, I escape the quotes because I want LITERALLY the quotes surrounding any number of any character. Something like a double quote is not allowed. Many languages have different end of line character counts so line break handling is hairy.
--Char Literals: \'.\' #Once again, I escape the '' *** same issue as with String Literals
+-String Literals: \".*\" 
+-Char Literals: \'.\' 
 
 
 Part B: CFG
-#Here are some common definitions that will be used later on.
 <ident> = [a-zA-Z][a-zA-Z0-9_]*
 <int> = -?[1-9][0-9]*
 <flt> = -?[0-9]*"."[0-9]+
